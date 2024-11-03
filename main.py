@@ -28,6 +28,7 @@ fake_users_db = {
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 
@@ -87,6 +88,13 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
+def create_refresh_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(days=7)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -116,7 +124,7 @@ async def get_current_active_user(
 
 
 @app.post("/token")
-async def login_for_access_token(
+async def login_for_tokens(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
     user = authenticate_user(fake_users_db, form_data.username, form_data.password)
@@ -130,7 +138,22 @@ async def login_for_access_token(
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return Token(access_token=access_token, token_type="bearer")
+    refresh_token = create_refresh_token(data={"sub": user.username})
+    return Token(access_token=access_token, refresh_token=refresh_token, token_type="bearer")
+
+
+@app.post('/refresh')
+async def refresh(refresh_token: str):
+    payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    if username is None:
+        raise HTTPException(status_code=403, detail="Could not validate credentials")
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    new_access_token = create_access_token(
+        data={"sub": username}, expires_delta=access_token_expires
+    )
+    refresh_token = create_refresh_token(data={"sub": username})
+    return Token(access_token=new_access_token, refresh_token=refresh_token, token_type="bearer")
 
 
 @app.get("/users/me/", response_model=User)
