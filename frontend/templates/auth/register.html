@@ -1,0 +1,71 @@
+{% extends "basic_template.html" %}
+
+{% block links %}
+<link rel="stylesheet" href="../static/css/auth_forms.css">
+{% endblock %}
+
+{% block content %}
+
+<form action="http://localhost:8000/api/v0/auth/register" method="post" class="auth-form needs-validation white-filled"
+      enctype="multipart/form-data">
+    <h1>Регистрация</h1>
+    <div>
+        Name<br>
+        <input v-model="name" name="name" placeholder="Enter name" class="form-control"/><br>
+    </div>
+    <div>
+        Email<br>
+        <input v-model="email" name="email" placeholder="Enter email" class="form-control" type="email"/><br>
+    </div>
+    <div>
+        Password<br>
+        <input v-model="password" name="password" placeholder="Enter password" class="form-control"
+               type="password"/><br>
+    </div>
+    <div>
+        Password<br>
+        <input v-model="password_again" name="password_again" placeholder="Enter password again" class="form-control"
+               type="password"/><br>
+    </div>
+    <button class="form-button primary-filled" type="submit">Зарегистрироваться</button>
+    <hr width="100%" size="2">
+    <a href="/auth/login" class="login-a light-filled">
+        Войти в Lite Tracker
+    </a>
+</form>
+<script type="module">
+    import {createApp} from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+
+    createApp({
+        data() {
+            return {
+                name: '',
+                email: '',
+                password: '',
+                password_again: ''
+            }
+        },
+        delimiters: ["[[", "]]"],
+        compilerOptions: {
+            delimiters: ["[[", "]]"]
+        },
+        methods: {
+            sendForm(name, email, password, password_again) {
+                fetch('http://localhost:8000/api/v0/auth/register', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        password: password,
+                        password_again: password_again
+                    }),
+                    headers: {'Content-Type': 'application/json'}
+                });
+                {
+
+                }
+            }
+        }
+    }).mount('#form')
+</script>
+{% endblock %}

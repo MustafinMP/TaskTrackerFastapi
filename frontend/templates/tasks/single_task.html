@@ -1,0 +1,93 @@
+{% extends "basic_template_with_navbar.html" %}
+
+{% block links %}
+<link rel="stylesheet" href="{{ url_for('static', filename='/css/single_task.css') }}">
+{% endblock %}
+
+{% block title %}Task № {{ task.id }}{% endblock %}
+
+{% block content %}
+<script>
+    function updateStatus(task_id, status_id, name, clr) {
+        fetch('/tasks/change_status', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({'task_id': task_id, 'new_status_id': status_id})
+        })
+        .then(res => res.json())
+        .then(data => console.log('Успешно:', data));
+        main_button = document.querySelector('#dropbtn-main');
+        main_button.className = 'dropbtn ' + clr + '-filled border-05r';
+        main_button.textContent = name;
+    }
+</script>
+<section class="task-card white-filled border-1r">
+    <h2 class="task-title">{{ task.name }}</h2>
+    <h6 class="task-deadline">
+        {% if task.deadline %}
+        {{ task.deadline.strftime('%d.%m.%Y') }}
+        {% else %}
+        Без дедлайна
+        {% endif %}
+    </h6>
+    <a href="/tasks/edit/{{ task.id }}" class="navbar-item light-filled d-inline">
+        <i class="bi bi-pencil-square"></i>
+    </a>
+    <p class="task-description py-3" style="font-size: 1.1rem;">{{ task.description }}</p>
+
+    <div class="dropdown">
+        <button id="dropbtn-main" class="dropbtn {{ task.status.color_tag }}-filled border-05r">{{ task.status.name }}
+        </button>
+        <div class="dropdown-content">
+            {% for status in statuses %}
+            <button class="dropbtn {{ status.color_tag }}-filled w-100"
+                    onclick="updateStatus({{ task.id }}, {{ status.id }}, '{{ status.name }}', '{{ status.color_tag }}')">
+                {{ status.name }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <p class="card-body py-2">Автор: {{ task.creator.name }}</p>
+    <div>
+        <button id="button-start" class="timer-button light-filled light-filled-on-hover">
+            <i class="bi bi-play-fill"></i>
+        </button>
+        <button id="button-run" class="timer-button light-filled light-filled-on-hover">
+            <i class="bi bi-play-fill"></i>
+        </button>
+        <button id="button-stop" class="timer-button light-filled light-filled-on-hover">
+            <i class="bi bi-stop-fill"></i>
+        </button>
+        <button id="button-pause" class="timer-button light-filled light-filled-on-hover">
+            <i class="bi bi-pause"></i>
+        </button>
+    </div>
+    <a href="/tasks/delete/{{ task.id }}" class="btn btn-outline-danger btn-lg">Удалить</a>
+</section>
+
+<script>
+    let item = document.querySelector('#aside-navbar-tasks');
+    item.classList.remove('white-filled-with-hover');
+    item.classList.add('dark-filled');
+</script>
+
+<script>
+    function start() {
+        fetch('../../api/timers/create/{{ task.id }}');
+    }
+    function pause() {
+        fetch('../../api/timers/pause');
+    }
+    function run() {
+        fetch('../../api/timers/continue');
+    }
+    function stop() {
+        fetch('../../api/timers/terminate');
+    }
+    document.getElementById('button-start').onclick = start;
+    document.getElementById('button-run').onclick = run;
+    document.getElementById('button-stop').onclick = stop;
+    document.getElementById('button-pause').onclick = pause;
+</script>
+{% endblock %}

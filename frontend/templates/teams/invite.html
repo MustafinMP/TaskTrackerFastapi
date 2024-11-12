@@ -1,0 +1,16 @@
+{% extends "basic_template_with_navbar.html" %}
+
+{% block title %}Мои команды{% endblock %}
+
+{% block content %}
+
+<section class="">
+    {{ invite_link }}
+</section>
+
+<script>
+    let item = document.querySelector('#aside-navbar-teams');
+    item.classList.remove('white-filled-with-hover');
+    item.classList.add('dark-filled');
+</script>
+{% endblock %}
