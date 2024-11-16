@@ -2,7 +2,7 @@ from datetime import timedelta
 from typing import Annotated
 
 import jwt
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
@@ -68,5 +68,6 @@ async def read_own_items(
 
 
 @router.post('/register')
-async def register(form: RegisterFormSchema):
+async def register(form: Annotated[RegisterFormSchema, Form()]):
+    print(form.json())
     return form
