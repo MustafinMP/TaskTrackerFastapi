@@ -6,24 +6,19 @@
 
 {% block content %}
 
-<form id="form" class="auth-form needs-validation white-filled">
+<form action="http://localhost:8000/api/v0/auth/login" method="post" class="auth-form needs-validation white-filled"
+      enctype="multipart/form-data">
     <h1>Вход</h1>
     <div>
-        Name<br>
-        <input v-model="name" placeholder="Enter name" class="form-control"/><br>
-    </div>
-    <div>
         Email<br>
-        <input v-model="email" placeholder="Enter email" class="form-control" type="email"/><br>
+        <input name="email" placeholder="Enter email" class="form-control" type="email"/><br>
     </div>
     <div>
         Password<br>
-        <input v-model="password" placeholder="Enter password" class="form-control" type="password"/><br>
+        <input name="password" placeholder="Enter password" class="form-control"
+               type="password"/><br>
     </div>
-    <div>
-        Password<br>
-        <input v-model="password_again" placeholder="Enter password again" class="form-control" type="password"/><br>
-    </div>
+    <button class="form-button primary-filled" type="submit">Войти</button>
     <hr width="100%" size="2">
     <a href="/auth/register" class="register-a light-filled">
         Зарегистрироваться
@@ -36,41 +31,5 @@
             <div></div>
         </a>
     </section>
-    <button class="form-button primary-filled" @click="sendForm(name, email, password, password_again)"></button>
 </form>
-<script type="module">
-    import {createApp} from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
-
-    createApp({
-        data() {
-            return {
-                name: '',
-                email: '',
-                password: '',
-                password_again: ''
-            }
-        },
-        delimiters: ["[[", "]]"],
-        compilerOptions: {
-            delimiters: ["[[", "]]"]
-        },
-        methods: {
-            sendForm(name, email, password, password_again) {
-                fetch('http://localhost:8000/api/v0/auth/register', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        name: name,
-                        email: email,
-                        password: password,
-                        password_again: password_again
-                    }),
-                    headers: {'Content-Type': 'application/json'}
-                });
-                {
-
-                }
-            }
-        }
-    }).mount('#form')
-</script>
 {% endblock %}

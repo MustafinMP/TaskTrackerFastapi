@@ -1,27 +1,11 @@
-from typing import Any
-
 from pydantic import BaseModel
 
 
-class Token(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str
-
-
-class TokenData(BaseModel):
-    username: str | None = None
-
-
-class User(BaseModel):
+class UserSchema(BaseModel):
     username: str
     email: str | None = None
     full_name: str | None = None
     disabled: bool | None = None
-
-
-class UserInDB(User):
-    hashed_password: str
 
 
 class RegisterFormSchema(BaseModel):
@@ -29,3 +13,8 @@ class RegisterFormSchema(BaseModel):
     email: str
     password: str
     password_again: str
+
+
+class LoginFormSchema(BaseModel):
+    name: str
+    password: str
