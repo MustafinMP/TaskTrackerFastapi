@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-
+from sqlalchemy_serializer import SerializerMixin
 
 from db_session import SqlAlchemyBase
 from sqlalchemy import Column, String, TIMESTAMP, ForeignKey
@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from teams.models import Team
 
 
-class User(SqlAlchemyBase):
+class User(SqlAlchemyBase, SerializerMixin):
     """Main user model.
 
     :param id: the unique user identification key.

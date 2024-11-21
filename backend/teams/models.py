@@ -3,6 +3,7 @@ from typing import List
 
 from sqlalchemy import String, ForeignKey, Table, Column, Integer, TIMESTAMP, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy_serializer import SerializerMixin
 
 from db_session import SqlAlchemyBase
 
@@ -13,7 +14,7 @@ user_to_team = Table(
 )
 
 
-class Team(SqlAlchemyBase):
+class Team(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'team'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -24,7 +25,7 @@ class Team(SqlAlchemyBase):
     creator = relationship('User', foreign_keys=[creator_id])
 
 
-class InviteLink(SqlAlchemyBase):
+class InviteLink(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'invite_link'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import joinedload
 
 from auth.exceptions import UserIsAlreadyExistsError
 from auth.models import User
@@ -8,7 +8,7 @@ from auth.models import User
 
 class UserRepository:
     def __init__(self, session: AsyncSession):
-        self.session: Session = session
+        self.session: AsyncSession = session
 
     async def get_by_id(self, user_id: int) -> User | None:
         """Find user in database by id.
@@ -40,7 +40,7 @@ class UserRepository:
         stmt = select(User).where(User.oauth_yandex_id == yandex_id).options(joinedload(User.teams))
         return await self.session.scalar(stmt)
 
-    async def add(self, name: str, email: str, password: str) -> None:
+    async def add(self, name: str, email: str, password: str) -> int:
         """Create new user by data from register form.
 
         :param name:
@@ -48,7 +48,8 @@ class UserRepository:
         :param password:
         :return: no return.
         """
-        if self.get_by_email(email) is not None:
+        if await self.get_by_email(email) is not None:
+            print(self.get_by_email(email))
             raise UserIsAlreadyExistsError
 
         user = User()
@@ -56,10 +57,10 @@ class UserRepository:
         user.email = email
         user.set_password(password)
         self.session.add(user)
-        self.session.commit()
+        await self.session.commit()
 
     async def add_yandex_oauth_id(self, user_id: int, yandex_id: str) -> None:
-        user = self.get_by_id(user_id)
+        user = await self.get_by_id(user_id)
         user.oauth_yandex_id = yandex_id
         await self.session.merge(user)
-        self.session.commit()
+        await self.session.commit()

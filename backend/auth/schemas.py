@@ -8,6 +8,11 @@ class UserSchema(BaseModel):
     disabled: bool | None = None
 
 
+class LoginFormSchema(BaseModel):
+    email: str
+    password: str
+
+
 class RegisterFormSchema(BaseModel):
     name: str
     email: str
@@ -15,6 +20,5 @@ class RegisterFormSchema(BaseModel):
     password_again: str
 
 
-class LoginFormSchema(BaseModel):
-    name: str
-    password: str
+class AddUserSchema(RegisterFormSchema):
+    ...

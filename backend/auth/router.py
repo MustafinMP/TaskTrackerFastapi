@@ -1,11 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form
-from starlette.requests import Request
+from fastapi import APIRouter,  Form
 from starlette.responses import Response, RedirectResponse
 
-from auth.schemas import UserSchema, RegisterFormSchema, LoginFormSchema
-from auth.service import AuthService, UserService
+from auth.auth_service import AuthService
+from auth.schemas import RegisterFormSchema, LoginFormSchema
 from config import YANDEX_API_REQUEST
 
 router = APIRouter(
@@ -24,13 +23,8 @@ async def register(form: Annotated[RegisterFormSchema, Form()]):
 
 @router.post('/login')
 async def login_cookie(response: Response, form: Annotated[LoginFormSchema, Form()]):
-    AuthService.login_user(response, form)
+    await AuthService.login_user(response, form)
     return {'result': 'ok'}
-
-
-@router.get('/check-cookie')
-async def check_cookie(current_user: UserSchema = Depends(UserService.get_current_user)):
-    return current_user
 
 
 @router.get('/yandex-login')

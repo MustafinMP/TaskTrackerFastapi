@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey, orm, Table
 from sqlalchemy.orm import validates
+from sqlalchemy_serializer import SerializerMixin
 
 from db_session import SqlAlchemyBase
 
@@ -16,7 +17,7 @@ color_tags: tuple[str] = tuple(
 )
 
 
-class Task(SqlAlchemyBase):
+class Task(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'task'
     id: int = Column(Integer, primary_key=True, autoincrement=True, index=True)
     name: str = Column(String, nullable=False)
@@ -32,7 +33,7 @@ class Task(SqlAlchemyBase):
     team = orm.relationship('Team', foreign_keys=[team_id], backref='tasks', lazy="joined")
 
 
-class Status(SqlAlchemyBase):
+class Status(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'status'
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     name: str = Column(String(length=50), nullable=False)
@@ -45,7 +46,7 @@ class Status(SqlAlchemyBase):
         return value
 
 
-class Tag(SqlAlchemyBase):
+class Tag(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'tag'
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     name: str = Column(String(length=50), nullable=False)

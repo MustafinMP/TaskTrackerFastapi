@@ -39,9 +39,39 @@
     {% endfor %}
 </section>
 
-<script>
-    let item = document.querySelector('#aside-navbar-tasks');
-    item.classList.remove('white-filled-with-hover');
-    item.classList.add('dark-filled');
+<script type="module">
+    import {createApp} from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+
+    createApp({
+        data() {
+            return {
+                name: '',
+                email: '',
+                password: '',
+                password_again: ''
+            }
+        },
+        delimiters: ["[[", "]]"],
+        compilerOptions: {
+            delimiters: ["[[", "]]"]
+        },
+        methods: {
+            sendForm(name, email, password, password_again) {
+                fetch('http://localhost:8000/api/v0/tasks', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        password: password,
+                        password_again: password_again
+                    }),
+                    headers: {'Content-Type': 'application/json'}
+                });
+                {
+
+                }
+            }
+        }
+    }).mount('#form')
 </script>
 {% endblock %}
