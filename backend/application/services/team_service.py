@@ -1,15 +1,15 @@
 from fastapi import Depends
 
 import db_session
-from infrastructure.db_models.user_models import User
+from infrastructure.db_models.user_models import UserModel
 from application.services.account_service import UserService
-from infrastructure.db_models.team_models import Team
+from infrastructure.db_models.team_models import TeamModel
 from infrastructure.repositories.team_repository import TeamRepository
 
 
 class TeamService:
     @staticmethod
-    async def add_team(creator: User, team_name: str = None) -> None:
+    async def add_team(creator: UserModel, team_name: str = None) -> None:
         async with db_session.create_session() as session:
             repository = TeamRepository(session)
             await repository.add(creator, team_name)
@@ -21,7 +21,7 @@ class TeamService:
             await repository.add_new_members(team_id, *new_member_ids)
 
     @staticmethod
-    async def get_user_teams(current_user_id: int = Depends(UserService.get_current_user_id)) -> list[Team, ...]:
+    async def get_user_teams(current_user_id: int) -> list[TeamModel, ...]:
         async with db_session.create_session() as session:
             repository = TeamRepository(session)
             return await repository.get_by_member_id(current_user_id)
@@ -33,7 +33,7 @@ class TeamService:
             return await repository.have_member_by_ids(user_id, team_id)
 
     @staticmethod
-    async def get_team_by_id(team_id: int) -> Team:
+    async def get_team_by_id(team_id: int) -> TeamModel:
         async with db_session.create_session() as session:
             repository = TeamRepository(session)
             return await repository.get_by_id(team_id)

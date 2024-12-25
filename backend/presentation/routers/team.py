@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from application.services.team_service import TeamService
+from presentation.cookie_manager import CookieManager
 
 router = APIRouter(
     prefix='/teams',
@@ -9,10 +10,11 @@ router = APIRouter(
 
 
 @router.get('/all')
-def user_teams():
+async def user_teams(cookie_manager: CookieManager = Depends(CookieManager)):
+    user_id = await cookie_manager.get_current_user_id()
     return [
         team.to_dict(only=['id', 'name', 'members.image'])
-        for team in TeamService.get_user_teams()
+        for team in TeamService.get_user_teams(user_id)
     ]
 
 

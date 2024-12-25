@@ -1,6 +1,2 @@
-class UserDoesNotExistError(Exception):
-    ...
-
-
 class UserIsAlreadyExistsError(Exception):
     ...

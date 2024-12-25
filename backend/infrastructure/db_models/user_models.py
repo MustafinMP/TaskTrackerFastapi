@@ -9,7 +9,7 @@ from sqlalchemy import Column, String, TIMESTAMP, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class User(SqlAlchemyBase, SerializerMixin):
+class UserModel(SqlAlchemyBase, SerializerMixin):
     """Main user model.
 
     :param id: the unique user identification key.
@@ -32,8 +32,8 @@ class User(SqlAlchemyBase, SerializerMixin):
     image: Mapped[Optional[str]] = mapped_column(String, default='default.png')
     current_team_id: Mapped[Optional[int]] = Column(ForeignKey('team.id'))
 
-    current_team = relationship('Team', foreign_keys=[current_team_id])
-    teams = relationship('Team', secondary='user_to_team', back_populates='members')
+    current_team = relationship('TeamModel', foreign_keys=[current_team_id])
+    teams = relationship('TeamModel', secondary='user_to_team', back_populates='members')
 
     oauth_yandex_id: Mapped[Optional[str]] = mapped_column(String, unique=True, nullable=True)
 

@@ -2,6 +2,6 @@ from dataclasses import dataclass
 
 
 @dataclass
-class CookieSessionDTO:
+class CookieSession:
     user_id: str
     login_at: int

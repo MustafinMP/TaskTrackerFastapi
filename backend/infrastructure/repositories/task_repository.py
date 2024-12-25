@@ -4,8 +4,9 @@ from sqlalchemy import select, update, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from infrastructure.db_models.task_models import Task, Tag, Status
-from infrastructure.db_models.team_models import Team
+from infrastructure.db_models.task_models import TaskModel, TagModel, StatusModel
+from infrastructure.db_models.team_models import TeamModel
+from infrastructure.entities.status import StatusDTO
 
 
 class TaskRepository:
@@ -32,7 +33,7 @@ class TaskRepository:
         :return: no return.
         """
 
-        task = Task()
+        task = TaskModel()
         task.name = name
         task.description = description
         task.team_id = team_id
@@ -52,18 +53,18 @@ class TaskRepository:
         :return: no return.
         """
 
-        task_stmt = select(Task).where(
-            Task.id == task_id
+        task_stmt = select(TaskModel).where(
+            TaskModel.id == task_id
         )
-        tag_stmt = select(Tag).where(
-            Tag.id == tag_id
+        tag_stmt = select(TagModel).where(
+            TagModel.id == tag_id
         )
-        task: Task = self.session.scalar(task_stmt)
-        tag: Tag = self.session.scalar(tag_stmt)
+        task: TaskModel = self.session.scalar(task_stmt)
+        tag: TagModel = self.session.scalar(tag_stmt)
         tag.tasks.append(task)
         await self.session.commit()
 
-    async def get_by_id(self, task_id: int) -> Task | None:
+    async def get_by_id(self, task_id: int) -> TaskModel | None:
         """Find task by id.
 
         :param task_id:
@@ -71,8 +72,8 @@ class TaskRepository:
         :return: task object or none.
         """
 
-        stmt = select(Task).where(
-            Task.id == task_id
+        stmt = select(TaskModel).where(
+            TaskModel.id == task_id
         )
         # .join(Task.team).filter(
         #     Team.id == team_id
@@ -81,7 +82,7 @@ class TaskRepository:
         # ))
         return await self.session.scalar(stmt)
 
-    async def get_by_status(self, status_id: int, team_id: int) -> list[Task, ...]:
+    async def get_by_status(self, status_id: int, team_id: int) -> list[TaskModel, ...]:
         """Find tasks by their status.
 
         :param team_id: the id of team.
@@ -89,25 +90,25 @@ class TaskRepository:
         :return: list of tasks with current status.
         """
 
-        stmt = select(Task).where(
-            Task.status_id == status_id
-        ).join(Task.team).filter(
-            Team.id == team_id
+        stmt = select(TaskModel).where(
+            TaskModel.status_id == status_id
+        ).join(TaskModel.team).filter(
+            TeamModel.id == team_id
         )
         return (await self.session.scalars(stmt)).unique().all()
 
-    async def get_by_team_id(self, team_id: int) -> list[Task, ...]:
-        stmt = select(Task).join(Task.team).filter(
-            Team.id == team_id
+    async def get_by_team_id(self, team_id: int) -> list[TaskModel, ...]:
+        stmt = select(TaskModel).join(TaskModel.team).filter(
+            TeamModel.id == team_id
         ).options(
-            joinedload(Task.creator)
+            joinedload(TaskModel.creator)
         )
 
         return (await self.session.scalars(stmt)).unique()
 
     async def count_by_team_id(self, team_id: int) -> int:
-        stmt = select(func.count()).select_from(Task).join(Task.team).filter(
-            Team.id == team_id
+        stmt = select(func.count()).select_from(TaskModel).join(TaskModel.team).filter(
+            TeamModel.id == team_id
         )
         return await self.session.scalar(stmt)
 
@@ -135,15 +136,15 @@ class TaskRepository:
         if new_status_id:
             values['status_id'] = new_status_id
 
-        stmt = update(Task).where(
-            Task.id == task_id,
+        stmt = update(TaskModel).where(
+            TaskModel.id == task_id,
         ).values(**values)
         await self.session.execute(stmt)
         await self.session.commit()
 
     async def update_object(
             self,
-            task: Task,
+            task: TaskModel,
             new_name: str = None,
             new_description: str = None,
             new_status_id: int = None
@@ -164,29 +165,12 @@ class TaskRepository:
         :return: no return.
         """
 
-        stmt = delete(Task).where(
-            Task.id == task_id
+        stmt = delete(TaskModel).where(
+            TaskModel.id == task_id
         )
         await self.session.execute(stmt)
         await self.session.commit()
 
-    async def delete_object(self, task: Task) -> None:
+    async def delete_object(self, task: TaskModel) -> None:
         await self.session.delete(task)
         await self.session.commit()
-
-
-class StatusRepository:
-    def __init__(self, session: AsyncSession):
-        self.session: AsyncSession = session
-
-    async def get_by_id(self, status_id: int) -> Status:
-        stmt = select(Status).where(
-            Status.id == status_id
-        )
-        return await self.session.scalar(stmt)
-
-    async def get_all(self) -> list[Status]:
-        stmt = select(Status)
-        return (await self.session.scalars(stmt)).all()
-
-

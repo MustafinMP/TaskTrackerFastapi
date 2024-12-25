@@ -1,11 +1,13 @@
 from fastapi import Depends
 
 import db_session
-from infrastructure.db_models.user_models import User
+from infrastructure.entities.status import StatusDTO
+from infrastructure.db_models.user_models import UserModel
 from application.services.account_service import UserService
-from exceptions.task_exceptions import TaskDoesNotExistError, UserPermissionError
-from infrastructure.db_models.task_models import Status, Task
-from infrastructure.repositories.task_repository import TaskRepository, StatusRepository
+from application.exceptions.task_exceptions import TaskDoesNotExistError, UserPermissionError
+from infrastructure.db_models.task_models import StatusModel, TaskModel
+from infrastructure.repositories.status import StatusRepository
+from infrastructure.repositories.task_repository import TaskRepository
 from application.services.team_service import TeamService
 
 
@@ -24,13 +26,14 @@ from application.services.team_service import TeamService
 
 class TaskService:
     @staticmethod
-    async def get_tasks_by_status(team_id: int, status: Status) -> list[Task]:
+    async def get_tasks_by_status(team_id: int, status: StatusModel) -> list[TaskModel]:
         with db_session.create_session() as session:
             repository = TaskRepository(session)
             return await repository.get_by_status(status.id, team_id)
 
     @staticmethod
-    async def get_task_by_id(task_id: int, current_user_id: int = Depends(UserService.get_current_user_id)) -> Task:
+    async def get_task_by_id(task_id: int,
+                             current_user_id: int = Depends(UserService.get_current_user_id)) -> TaskModel:
         with db_session.create_session() as session:
             repository = TaskRepository(session)
             task = await repository.get_by_id(task_id)
@@ -63,18 +66,21 @@ class TaskService:
             )
 
     @staticmethod
-    def delete_task(task_id: int, current_user: User = Depends(UserService.get_current_user)) -> None:
+    def delete_task(task_id: int, current_user: UserModel = Depends(UserService.get_current_user)) -> None:
         with db_session.create_session() as session:
             repository = TaskRepository(session)
-            task: Task = repository.get_by_id(task_id)
+            task: TaskModel = repository.get_by_id(task_id)
             if not task:
                 raise TaskDoesNotExistError
             if current_user not in task.team.members:
                 raise UserPermissionError
             repository.delete_object(task)
 
-    @staticmethod
-    def get_statuses() -> list[Status]:
+
+class StatusService:
+    def __init__(self):
         with db_session.create_session() as session:
-            repository = StatusRepository(session)
-            return repository.get_all()
+            self._repository = StatusRepository(session)
+
+    def get_statuses(self) -> list[StatusDTO]:
+        return self._repository.get_all()

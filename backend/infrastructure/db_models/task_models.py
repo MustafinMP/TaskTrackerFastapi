@@ -17,7 +17,7 @@ color_tags: tuple[str] = tuple(
 )
 
 
-class Task(SqlAlchemyBase, SerializerMixin):
+class TaskModel(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'task'
     id: int = Column(Integer, primary_key=True, autoincrement=True, index=True)
     name: str = Column(String, nullable=False)
@@ -28,12 +28,12 @@ class Task(SqlAlchemyBase, SerializerMixin):
     status_id: int = Column(Integer, ForeignKey('status.id'), default=0, nullable=False)
     team_id: int = Column(Integer, ForeignKey('team.id'), nullable=True)
 
-    creator = orm.relationship('User', foreign_keys=[creator_id], lazy="joined")
-    status = orm.relationship('Status', foreign_keys=[status_id], lazy="joined")
-    team = orm.relationship('Team', foreign_keys=[team_id], backref='tasks', lazy="joined")
+    creator = orm.relationship('UserModel', foreign_keys=[creator_id], lazy="joined")
+    status = orm.relationship('StatusModel', foreign_keys=[status_id], lazy="joined")
+    team = orm.relationship('TeamModel', foreign_keys=[team_id], backref='tasks', lazy="joined")
 
 
-class Status(SqlAlchemyBase, SerializerMixin):
+class StatusModel(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'status'
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     name: str = Column(String(length=50), nullable=False)
@@ -46,11 +46,11 @@ class Status(SqlAlchemyBase, SerializerMixin):
         return value
 
 
-class Tag(SqlAlchemyBase, SerializerMixin):
+class TagModel(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'tag'
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     name: str = Column(String(length=50), nullable=False)
-    tasks = orm.relationship('Task', secondary='task_to_tag', backref='tags', lazy="joined")
+    tasks = orm.relationship('TaskModel', secondary='task_to_tag', backref='tags', lazy="joined")
 
 
 task_to_tag = Table(

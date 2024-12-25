@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+
 
 from sqlalchemy import String, ForeignKey, Table, Column, Integer, TIMESTAMP, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -14,18 +14,18 @@ user_to_team = Table(
 )
 
 
-class Team(SqlAlchemyBase, SerializerMixin):
+class TeamModel(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'team'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(128), nullable=False)
     creator_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
 
-    members = relationship('User', secondary=user_to_team, back_populates='teams')
-    creator = relationship('User', foreign_keys=[creator_id])
+    members = relationship('UserModel', secondary=user_to_team, back_populates='teams')
+    creator = relationship('UserModel', foreign_keys=[creator_id])
 
 
-class InviteLink(SqlAlchemyBase, SerializerMixin):
+class InviteLinkModel(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'invite_link'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

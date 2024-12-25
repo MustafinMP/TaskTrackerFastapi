@@ -1,17 +1,17 @@
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infrastructure.db_models.user_models import User
+from infrastructure.db_models.user_models import UserModel
 from infrastructure.repositories.user_repository import UserRepository
-from infrastructure.db_models.team_models import Team, user_to_team
+from infrastructure.db_models.team_models import TeamModel, user_to_team
 
 
 class TeamRepository:
     def __init__(self, session: AsyncSession):
         self.session: AsyncSession = session
 
-    async def add(self, creator: User, team_name: str = None) -> None:
-        new_team = Team()
+    async def add(self, creator: UserModel, team_name: str = None) -> None:
+        new_team = TeamModel()
         new_team.creator_id = creator.id
         if team_name is None:
             team_name = 'New team'
@@ -37,12 +37,12 @@ class TeamRepository:
                 self.session.add(team)
         await self.session.commit()
 
-    async def get_by_id(self, team_id: int) -> Team:
-        stmt = select(Team).where(Team.id == team_id)
+    async def get_by_id(self, team_id: int) -> TeamModel:
+        stmt = select(TeamModel).where(TeamModel.id == team_id)
         return await self.session.scalar(stmt)
 
-    async def get_by_member_id(self, member_id: int) -> list[Team]:
-        teams_stmt = select(Team).join(Team.members).filter(User.id == member_id)
+    async def get_by_member_id(self, member_id: int) -> list[TeamModel]:
+        teams_stmt = select(TeamModel).join(TeamModel.members).filter(UserModel.id == member_id)
         return (await self.session.scalars(teams_stmt)).unique().fetchall()
 
     async def have_member_by_ids(self, user_id: int, team_id: int) -> bool:
