@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter,  Form
 from starlette.responses import Response, RedirectResponse
 
-from auth.auth_service import AuthService
-from auth.schemas import RegisterFormSchema, LoginFormSchema
+from application.services.auth_service import AuthService
+from presentation.schemas.user_schemas import RegisterFormSchema, LoginFormSchema
 from config import YANDEX_API_REQUEST
 
 router = APIRouter(
@@ -29,7 +29,7 @@ async def login_cookie(response: Response, form: Annotated[LoginFormSchema, Form
 
 @router.get('/yandex-login')
 async def yandex_login():
-    """Reginster or sign in by means of Yandex Account."""
+    """Register or sign in by means of Yandex Account."""
     redirect_url = YANDEX_API_REQUEST
     return RedirectResponse(redirect_url)
 

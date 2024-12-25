@@ -4,8 +4,8 @@ from sqlalchemy import select, update, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from tasks.models import Task, Tag, Status
-from teams.models import Team
+from infrastructure.db_models.task_models import Task, Tag, Status
+from infrastructure.db_models.team_models import Team
 
 
 class TaskRepository:

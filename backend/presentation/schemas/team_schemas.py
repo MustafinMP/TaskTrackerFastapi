@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from auth.schemas import UserSchema
+from presentation.schemas.user_schemas import UserSchema
 
 
 class TeamSchema(BaseModel):

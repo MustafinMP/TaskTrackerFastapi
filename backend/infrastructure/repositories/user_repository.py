@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from auth.exceptions import UserIsAlreadyExistsError
-from auth.models import User
+from exceptions.user_exceptions import UserIsAlreadyExistsError
+from infrastructure.db_models.user_models import User
 
 
 class UserRepository:

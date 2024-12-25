@@ -1,14 +1,12 @@
-from datetime import datetime
-
 from fastapi import Depends
 
 import db_session
-from auth.models import User
-from auth.service import UserService
-from tasks.exceptions import TaskDoesNotExistError, UserPermissionError
-from tasks.models import Status, Task
-from tasks.repository import TaskRepository, StatusRepository
-from teams.service import TeamService
+from infrastructure.db_models.user_models import User
+from application.services.account_service import UserService
+from exceptions.task_exceptions import TaskDoesNotExistError, UserPermissionError
+from infrastructure.db_models.task_models import Status, Task
+from infrastructure.repositories.task_repository import TaskRepository, StatusRepository
+from application.services.team_service import TeamService
 
 
 # def add_task(name: str, description: str, deadline: datetime | None = None, status_id: int | None = None) -> None:

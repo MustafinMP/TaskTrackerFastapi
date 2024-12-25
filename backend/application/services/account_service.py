@@ -7,11 +7,12 @@ from starlette import status
 from starlette.responses import Response
 
 import db_session
-from auth.models import User
-from auth.repository import UserRepository
-from auth.schemas import AddUserSchema
+from application.dto.cookie import CookieSessionDTO
+from infrastructure.db_models.user_models import User
+from infrastructure.repositories.user_repository import UserRepository
+from presentation.schemas.user_schemas import AddUserSchema
 
-COOKIES: dict[str, dict[str, Any]] = {}
+COOKIES: dict[str, CookieSessionDTO] = {}
 COOKIE_SESSION_ID_KEY = 'session-id'
 
 
@@ -26,10 +27,11 @@ class CookieService:
             user_id = (await UserService.get_user_by_yandex_uid(yandex_uid)).id
         else:
             raise Exception
-        COOKIES[session_id] = {'user_id': user_id, 'login_at': int(time())}
+        cookie = CookieSessionDTO(user_id=user_id, login_at=int(time()))
+        COOKIES[session_id] = cookie
 
     @staticmethod
-    def get_session_data(session_id: str = Cookie(alias=COOKIE_SESSION_ID_KEY)) -> dict[str, Any]:
+    def get_session_data(session_id: str = Cookie(alias=COOKIE_SESSION_ID_KEY)) -> CookieSessionDTO:
         if session_id not in COOKIES:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         return COOKIES[session_id]
@@ -38,7 +40,7 @@ class CookieService:
 class UserService:
     @staticmethod
     async def get_current_user_id(user_session_data: dict = Depends(CookieService.get_session_data)) -> User:
-        user_id = user_session_data.get('user_id', None)
+        user_id: int = user_session_data.get('user_id', None)
         return user_id
 
     @staticmethod

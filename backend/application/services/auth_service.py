@@ -4,12 +4,12 @@ from starlette import status
 from starlette.responses import Response
 
 import db_session
-from auth.models import User
-from auth.repository import UserRepository
-from auth.schemas import LoginFormSchema, RegisterFormSchema
-from auth.service import UserService, CookieService
+from infrastructure.db_models.user_models import User
+from infrastructure.repositories.user_repository import UserRepository
+from presentation.schemas.user_schemas import LoginFormSchema, RegisterFormSchema
+from application.services.account_service import UserService, CookieService
 from config import YA_CLIENT_ID, YA_CLIENT_SECRET
-from teams.service import TeamService
+from application.services.team_service import TeamService
 
 
 class AuthService:

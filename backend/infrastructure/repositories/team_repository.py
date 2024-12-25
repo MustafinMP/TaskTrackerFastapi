@@ -1,9 +1,9 @@
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.models import User
-from auth.repository import UserRepository
-from teams.models import Team, user_to_team
+from infrastructure.db_models.user_models import User
+from infrastructure.repositories.user_repository import UserRepository
+from infrastructure.db_models.team_models import Team, user_to_team
 
 
 class TeamRepository:

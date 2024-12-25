@@ -1,10 +1,10 @@
 from fastapi import Depends
 
 import db_session
-from auth.models import User
-from auth.service import UserService
-from teams.models import Team
-from teams.repository import TeamRepository
+from infrastructure.db_models.user_models import User
+from application.services.account_service import UserService
+from infrastructure.db_models.team_models import Team
+from infrastructure.repositories.team_repository import TeamRepository
 
 
 class TeamService:

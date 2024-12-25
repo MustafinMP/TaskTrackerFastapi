@@ -3,9 +3,8 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
-import db_session
-from auth.router import router as auth_router
-from auth.pages import router as auth_router_pages
+from presentation.routers.auth_router import router as auth_router
+from presentation.pages.account_pages import router as auth_router_pages
 
 # to get a string like this run:
 # openssl rand -hex 32

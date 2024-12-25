@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from teams.service import TeamService
+from application.services.team_service import TeamService
 
 router = APIRouter(
     prefix='/teams',
