@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from infrastructure.db_models.task_models import TaskModel, TagModel
-from infrastructure.db_models.team_models import TeamModel
+from infrastructure.db_models.project_models import ProjectModel
 from infrastructure.entities.task import CreateTaskDM, TaskToTagRelationDM, UpdateTaskDM
 
 
@@ -24,7 +24,7 @@ class TaskRepository:
         task_model = TaskModel()
         task_model.name = task.name
         task_model.description = task.description
-        task_model.team_id = task.team_id
+        task_model.project_id = task.team_id
         if task.deadline is not None:
             task_model.deadline = task.deadline
         if task.status_id is not None:
@@ -79,14 +79,14 @@ class TaskRepository:
 
         stmt = select(TaskModel).where(
             TaskModel.status_id == status_id
-        ).join(TaskModel.team).filter(
-            TeamModel.id == team_id
+        ).join(TaskModel.project).filter(
+            ProjectModel.id == team_id
         )
         return (await self.session.scalars(stmt)).unique().all()
 
     async def get_by_team_id(self, team_id: int) -> list[TaskModel, ...]:
-        stmt = select(TaskModel).join(TaskModel.team).filter(
-            TeamModel.id == team_id
+        stmt = select(TaskModel).join(TaskModel.project).filter(
+            ProjectModel.id == team_id
         ).options(
             joinedload(TaskModel.creator)
         )
@@ -94,8 +94,8 @@ class TaskRepository:
         return (await self.session.scalars(stmt)).unique()
 
     async def count_by_team_id(self, team_id: int) -> int:
-        stmt = select(func.count()).select_from(TaskModel).join(TaskModel.team).filter(
-            TeamModel.id == team_id
+        stmt = select(func.count()).select_from(TaskModel).join(TaskModel.project).filter(
+            ProjectModel.id == team_id
         )
         return await self.session.scalar(stmt)
 

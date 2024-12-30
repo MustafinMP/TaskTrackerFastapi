@@ -8,7 +8,7 @@ from infrastructure.repositories.user_repository import UserRepository
 from presentation.schemas.user_schemas import LoginFormSchema, RegisterFormSchema
 from application.services.account_service import UserService
 from config import YA_CLIENT_ID, YA_CLIENT_SECRET
-from application.services.team_service import TeamService
+from application.services.project_service import ProjectService
 
 
 class AuthService:
@@ -35,7 +35,7 @@ class AuthService:
                 detail='Пароли не совпадают'
             )
         user = await UserService.add_user(form)
-        await TeamService.add_team(user)
+        await ProjectService.add_project(user)
 
     # @staticmethod
     # def yandex_callback(code) -> None:

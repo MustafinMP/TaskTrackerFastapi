@@ -8,7 +8,7 @@ from application.exceptions.task_exceptions import TaskDoesNotExistError, UserPe
 from infrastructure.db_models.task_models import StatusModel, TaskModel
 from infrastructure.repositories.status import StatusRepository
 from infrastructure.repositories.task_repository import TaskRepository
-from application.services.team_service import TeamService
+from application.services.project_service import ProjectService
 
 
 # def add_task(name: str, description: str, deadline: datetime | None = None, status_id: int | None = None) -> None:
@@ -39,7 +39,7 @@ class TaskService:
             task = await repository.get_by_id(task_id)
             if not task:
                 raise TaskDoesNotExistError
-            if not TeamService.user_in_team_by_ids(current_user_id, task.team.id):
+            if not ProjectService.is_user_project(current_user_id, task.project.id):
                 raise UserPermissionError
             return task
 
@@ -56,7 +56,7 @@ class TaskService:
             task = await repository.get_by_id(task_id)
             if not task:
                 raise TaskDoesNotExistError
-            if not TeamService.user_in_team_by_ids(current_user_id, task.team.id):
+            if not ProjectService.is_user_project(current_user_id, task.project.id):
                 raise UserPermissionError
             await repository.update_object(
                 task,
@@ -72,7 +72,7 @@ class TaskService:
             task: TaskModel = repository.get_by_id(task_id)
             if not task:
                 raise TaskDoesNotExistError
-            if current_user not in task.team.members:
+            if current_user not in task.project.members:
                 raise UserPermissionError
             repository.delete_object(task)
 

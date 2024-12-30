@@ -18,8 +18,6 @@ class UserModel(SqlAlchemyBase, SerializerMixin):
     :param hashed_password: the hash of user password.
     :param created_date: the date, when ...
     :param image: the filename of user profile image.
-    :param current_team_id: the id of last current team.
-    :param current_team: the last current team.
     """
 
     __tablename__ = 'user'
@@ -30,10 +28,8 @@ class UserModel(SqlAlchemyBase, SerializerMixin):
     hashed_password: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     created_date: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.now)
     image: Mapped[Optional[str]] = mapped_column(String, default='default.png')
-    current_team_id: Mapped[Optional[int]] = Column(ForeignKey('team.id'))
 
-    current_team = relationship('TeamModel', foreign_keys=[current_team_id])
-    teams = relationship('TeamModel', secondary='user_to_team', back_populates='members')
+    projects = relationship('ProjectModel', secondary='user_to_project', back_populates='members')
 
     oauth_yandex_id: Mapped[Optional[str]] = mapped_column(String, unique=True, nullable=True)
 

@@ -17,7 +17,7 @@ class UserRepository:
         :return: user object or none.
         """
 
-        stmt = select(UserModel).where(UserModel.id == user_id).options(joinedload(UserModel.teams))
+        stmt = select(UserModel).where(UserModel.id == user_id).options(joinedload(UserModel.projects))
         return await self.session.scalar(stmt)
 
     async def get_by_email(self, user_email: str) -> UserModel | None:
@@ -37,7 +37,7 @@ class UserRepository:
         :return: user object or none.
         """
 
-        stmt = select(UserModel).where(UserModel.oauth_yandex_id == yandex_id).options(joinedload(UserModel.teams))
+        stmt = select(UserModel).where(UserModel.oauth_yandex_id == yandex_id).options(joinedload(UserModel.projects))
         return await self.session.scalar(stmt)
 
     async def add(self, name: str, email: str, password: str) -> int:

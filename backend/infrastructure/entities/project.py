@@ -10,8 +10,8 @@ class MemberDM:
 
 
 @dataclass
-class TeamDM:
+class ProjectDM:
     id: int
-    name: str
+    title: str
     creator_id: int
     members: list[MemberDM]
