@@ -1,12 +1,10 @@
-from datetime import datetime
-
 from sqlalchemy import select, update, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from infrastructure.db_models.task_models import TaskModel, TagModel, StatusModel
+from infrastructure.db_models.task_models import TaskModel, TagModel
 from infrastructure.db_models.team_models import TeamModel
-from infrastructure.entities.status import StatusDTO
+from infrastructure.entities.task import CreateTaskDM, TaskToTagRelationDM, UpdateTaskDM
 
 
 class TaskRepository:
@@ -15,49 +13,38 @@ class TaskRepository:
 
     async def add(
             self,
-            creator_id: int,
-            team_id: int,
-            name: str,
-            description: str,
-            deadline: datetime | None = None,
-            status_id: int | None = None
+            task: CreateTaskDM
     ) -> None:
         """Create new task and save it to database.
 
-        :param team_id:
-        :param creator_id:
-        :param name: the task name (task header).
-        :param description: the task description.
-        :param deadline: datetime, when task should be done.
-        :param status_id: the id of task status.
+        :param task:
         :return: no return.
         """
 
-        task = TaskModel()
-        task.name = name
-        task.description = description
-        task.team_id = team_id
-        if deadline is not None:
-            task.deadline = deadline
-        if status_id is not None:
-            task.status_id = status_id
-            task.creator_id = creator_id
-        self.session.add(task)
+        task_model = TaskModel()
+        task_model.name = task.name
+        task_model.description = task.description
+        task_model.team_id = task.team_id
+        if task.deadline is not None:
+            task_model.deadline = task.deadline
+        if task.status_id is not None:
+            task_model.status_id = task.status_id
+        task_model.creator_id = task.creator_id
+        self.session.add(task_model)
         await self.session.commit()
 
-    async def add_tag_to_task(self, task_id: int, tag_id: int) -> None:
+    async def add_tag_to_task(self, relation: TaskToTagRelationDM) -> None:
         """Add tag to task.
 
-        :param task_id: the id of the task.
-        :param tag_id: the id of the tag.
+        :param relation:
         :return: no return.
         """
 
         task_stmt = select(TaskModel).where(
-            TaskModel.id == task_id
+            TaskModel.id == relation.task_id
         )
         tag_stmt = select(TagModel).where(
-            TagModel.id == tag_id
+            TagModel.id == relation.tag_id
         )
         task: TaskModel = self.session.scalar(task_stmt)
         tag: TagModel = self.session.scalar(tag_stmt)
@@ -114,30 +101,24 @@ class TaskRepository:
 
     async def update_by_id(
             self,
-            task_id: int,
-            new_name: str = None,
-            new_description: str = None,
-            new_status_id: int = None
+            new_task_data: UpdateTaskDM
     ) -> None:
         """Update information about current task.
 
-        :param task_id: the id of task.
-        :param new_name: the new name of task.
-        :param new_description: the new description of task.
-        :param new_status_id: the id of new status.
+        :param new_task_data:
         :return: no return.
         """
 
         values = dict()
-        if new_name:
-            values['name'] = new_name
-        if new_description:
-            values['description'] = new_description
-        if new_status_id:
-            values['status_id'] = new_status_id
+        if new_task_data.name:
+            values['name'] = new_task_data.name
+        if new_task_data.description:
+            values['description'] = new_task_data.description
+        if new_task_data.status_id:
+            values['status_id'] = new_task_data.status_id
 
         stmt = update(TaskModel).where(
-            TaskModel.id == task_id,
+            TaskModel.id == new_task_data.id,
         ).values(**values)
         await self.session.execute(stmt)
         await self.session.commit()

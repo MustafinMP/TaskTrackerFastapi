@@ -10,15 +10,20 @@ router = APIRouter(
 
 
 @router.get('/all')
-async def user_teams(cookie_manager: CookieManager = Depends(CookieManager)):
-    user_id = await cookie_manager.get_current_user_id()
-    return [
-        team.to_dict(only=['id', 'name', 'members.image'])
-        for team in TeamService.get_user_teams(user_id)
-    ]
+async def user_teams(user_id: int = Depends(CookieManager().get_current_user_id)):
+    return [] # [
+    #     team.to_dict(only=['id', 'name', 'members.image'])
+    #     for team in TeamService.get_user_teams(user_id)
+    # ]
 
 
-@router.get('/{team_id}')
-async def single_team(team_id: int):
-    team = await TeamService.get_team_by_id(team_id)
-    return team.to_dict(only=['id', 'name', 'members.image'])
+# @router.get('/{team_id}')
+# async def single_team(team_id: int):
+#     team = await TeamService.get_team_by_id(team_id)
+#     return team.to_dict(only=['id', 'name', 'members.image'])
+
+
+@router.get('/create_team')
+async def create_team(user_id: int = Depends(CookieManager().get_current_user_id)):
+    await TeamService.add_team(user_id, 'Test team')
+    return {'status': 'ok'}

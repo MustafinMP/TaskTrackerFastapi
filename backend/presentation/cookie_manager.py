@@ -12,21 +12,23 @@ COOKIE_SESSION_ID_KEY = 'session-id'
 
 
 class CookieManager:
-    def __init__(self) -> None:
-        self._cookies: dict[str, CookieSession] = {}
+    _cookies: dict[str, CookieSession] = {}
 
-    async def set_cookie(self, response: Response, user_id: int) -> None:
+    def __init__(self) -> None:
+        ...
+
+    def set_cookie(self, response: Response, user_id: int) -> None:
         session_id = uuid.uuid4().hex  # generate_code
-        response.set_cookie(COOKIE_SESSION_ID_KEY, session_id)
-        cookie = CookieSession(user_id=user_id, login_at=int(time()))
+        cookie = CookieSession(user_id=int(user_id), login_at=int(time()))
         self._cookies[session_id] = cookie
+        response.set_cookie(COOKIE_SESSION_ID_KEY, session_id)
 
     def get_session_data(self, session_id: str = Cookie(alias=COOKIE_SESSION_ID_KEY)) -> CookieSession:
         if session_id not in self._cookies:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         return self._cookies[session_id]
 
-    async def get_current_user_id(self, session_id: str = Cookie(alias=COOKIE_SESSION_ID_KEY)) -> int:
+    def get_current_user_id(self, session_id: str = Cookie(alias=COOKIE_SESSION_ID_KEY)) -> int:
         if session_id not in self._cookies:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         return self._cookies[session_id].user_id

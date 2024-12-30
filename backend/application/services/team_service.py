@@ -9,10 +9,10 @@ from infrastructure.repositories.team_repository import TeamRepository
 
 class TeamService:
     @staticmethod
-    async def add_team(creator: UserModel, team_name: str = None) -> None:
+    async def add_team(creator_id: int, team_name: str = None) -> None:
         async with db_session.create_session() as session:
             repository = TeamRepository(session)
-            await repository.add(creator, team_name)
+            await repository.add(int(creator_id), team_name)
 
     @staticmethod
     async def add_new_team_members(team_id: int, *new_member_ids: list[int]) -> None:
@@ -30,7 +30,8 @@ class TeamService:
     async def user_in_team_by_ids(user_id: int, team_id: int) -> bool:
         async with db_session.create_session() as session:
             repository = TeamRepository(session)
-            return await repository.have_member_by_ids(user_id, team_id)
+            team = await repository.get_by_id(team_id)
+            return any([user_id == member.id for member in team.members])
 
     @staticmethod
     async def get_team_by_id(team_id: int) -> TeamModel:

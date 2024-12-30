@@ -2,6 +2,7 @@ from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.db_models.user_models import UserModel
+from infrastructure.entities.team import TeamDM, MemberDM
 from infrastructure.repositories.user_repository import UserRepository
 from infrastructure.db_models.team_models import TeamModel, user_to_team
 
@@ -10,13 +11,12 @@ class TeamRepository:
     def __init__(self, session: AsyncSession):
         self.session: AsyncSession = session
 
-    async def add(self, creator: UserModel, team_name: str = None) -> None:
+    async def add(self, creator_id: int, team_name: str = None) -> None:
         new_team = TeamModel()
-        new_team.creator_id = creator.id
+        new_team.creator_id = creator_id
         if team_name is None:
             team_name = 'New team'
         new_team.name = team_name
-        new_team.members.append(creator)
         self.session.add(new_team)
         await self.session.commit()
 
@@ -37,19 +37,31 @@ class TeamRepository:
                 self.session.add(team)
         await self.session.commit()
 
-    async def get_by_id(self, team_id: int) -> TeamModel:
+    async def get_by_id(self, team_id: int) -> TeamDM:
         stmt = select(TeamModel).where(TeamModel.id == team_id)
-        return await self.session.scalar(stmt)
-
-    async def get_by_member_id(self, member_id: int) -> list[TeamModel]:
-        teams_stmt = select(TeamModel).join(TeamModel.members).filter(UserModel.id == member_id)
-        return (await self.session.scalars(teams_stmt)).unique().fetchall()
-
-    async def have_member_by_ids(self, user_id: int, team_id: int) -> bool:
-        stmt = select(user_to_team).where(
-            and_(
-                user_to_team.c.user == user_id,
-                user_to_team.c.team == team_id,
-            )
+        team = await self.session.scalar(stmt)
+        return TeamDM(
+            id=team.id,
+            name=team.name,
+            creator_id=team.creator_id,
+            members=[
+                MemberDM(id=member.id, name=member.name, image=member.image)
+                for member in team.members
+            ]
         )
-        return await self.session.scalar(stmt) is not None
+
+    async def get_by_member_id(self, member_id: int) -> list[TeamDM]:
+        teams_stmt = select(TeamModel).join(TeamModel.members).filter(UserModel.id == member_id)
+        teams = (await self.session.scalars(teams_stmt)).unique().fetchall()
+        return [
+            TeamDM(
+                id=team.id,
+                name=team.name,
+                creator_id=team.creator_id,
+                members=[
+                    MemberDM(id=member.id, name=member.name, image=member.image)
+                    for member in team.members
+                ]
+            )
+            for team in teams
+        ]

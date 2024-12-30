@@ -1,9 +1,16 @@
+import logging
+
 import uvicorn
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from starlette import status
 from starlette.middleware.cors import CORSMiddleware
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 
 from presentation.routers.auth import router as auth_router
+from presentation.routers.team import router as team_router
 from presentation.pages.account_pages import router as auth_router_pages
 
 # to get a string like this run:
@@ -29,7 +36,9 @@ app.add_middleware(
 app.mount('/static', StaticFiles(directory='../frontend/static', html=False))
 
 app.include_router(auth_router, prefix='/api/v0')
+app.include_router(team_router, prefix='/api/v0')
 app.include_router(auth_router_pages)
+
 
 if __name__ == '__main__':
     uvicorn.run('main:app')
