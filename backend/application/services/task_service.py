@@ -11,19 +11,6 @@ from infrastructure.repositories.task_repository import TaskRepository
 from application.services.project_service import ProjectService
 
 
-# def add_task(name: str, description: str, deadline: datetime | None = None, status_id: int | None = None) -> None:
-#     with db_session.create_session() as session:
-#         repository = TaskRepository(session)
-#         repository.add(
-#             current_user.id,
-#             current_user.current_team_id,
-#             name,
-#             description,
-#             deadline,
-#             status_id
-#         )
-
-
 class TaskService:
     @staticmethod
     async def get_tasks_by_status(team_id: int, status: StatusModel) -> list[TaskModel]:

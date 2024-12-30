@@ -20,7 +20,7 @@ SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 async def register(
         form: Annotated[RegisterFormSchema, Form()]
 ):
-    await AuthService.register_user(form)
+    await AuthService().register_user(form)
     return RedirectResponse('/auth/login')
 
 
@@ -30,9 +30,8 @@ async def login_cookie(
         form: Annotated[LoginFormSchema, Form()],
         cookie_manager: CookieManager = Depends(CookieManager)
 ):
-    user_id = await AuthService.login_user_for_id(form)
+    user_id = await AuthService().login_user_for_id(form)
     cookie_manager.set_cookie(response, user_id)
-    return {}
 
 
 @router.get('/yandex-login')

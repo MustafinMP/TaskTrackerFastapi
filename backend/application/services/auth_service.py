@@ -3,7 +3,9 @@ from fastapi import HTTPException, Depends
 from starlette import status
 
 import db_session
+from application.services.password_hasher import PasswordHasher
 from infrastructure.db_models.user_models import UserModel
+from infrastructure.entities.user import UserDM
 from infrastructure.repositories.user_repository import UserRepository
 from presentation.schemas.user_schemas import LoginFormSchema, RegisterFormSchema
 from application.services.account_service import UserService
@@ -12,30 +14,32 @@ from application.services.project_service import ProjectService
 
 
 class AuthService:
-    @staticmethod
-    async def login_user_for_id(form: LoginFormSchema) -> int:
-        user: UserModel = await UserService.get_user_by_email(form.email)
+    def __init__(self) -> None:
+        self._user_service = UserService()
+        self._password_hasher = PasswordHasher()
+
+    async def login_user_for_id(self, form: LoginFormSchema) -> int:
+        user: UserDM = await self._user_service.get_user_by_email(form.email)
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail='Пользователь не зарегистрирован'
             )
-        if not user.check_password(form.password):
+        if not self._password_hasher.check_password(user.hashed_password, form.password):
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail='Неверный пароль'
             )
         return user.id
 
-    @staticmethod
-    async def register_user(form: RegisterFormSchema) -> None:
+    async def register_user(self, form: RegisterFormSchema) -> None:
         if form.password != form.password_again:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail='Пароли не совпадают'
             )
-        user = await UserService.add_user(form)
-        await ProjectService.add_project(user)
+        user = await self._user_service.add_user(form)
+        # await ProjectService.add_project(user)
 
     # @staticmethod
     # def yandex_callback(code) -> None:

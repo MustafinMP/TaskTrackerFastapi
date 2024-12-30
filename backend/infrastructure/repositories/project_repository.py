@@ -19,6 +19,7 @@ class ProjectRepository:
         new_project.title = project_title
         self.session.add(new_project)
         await self.session.commit()
+        # print(new_project.id, new_project.title)
 
     async def add_new_members(self, project_id: int, *new_member_ids: list[int]) -> None:
         """
