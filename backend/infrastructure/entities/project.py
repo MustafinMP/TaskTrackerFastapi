@@ -14,4 +14,3 @@ class ProjectDM:
     id: int
     title: str
     creator_id: int
-    members: list[MemberDM]

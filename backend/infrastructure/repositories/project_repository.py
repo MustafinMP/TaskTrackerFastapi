@@ -1,25 +1,30 @@
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.db_models.user_models import UserModel
 from infrastructure.entities.project import ProjectDM, MemberDM
-from infrastructure.repositories.user_repository import UserRepository
-from infrastructure.db_models.project_models import ProjectModel
+from infrastructure.db_models.project_models import ProjectModel, user_to_project_model
 
 
 class ProjectRepository:
     def __init__(self, session: AsyncSession):
         self.session: AsyncSession = session
 
-    async def add(self, creator_id: int, project_title: str = None) -> None:
-        new_project = ProjectModel()
-        new_project.creator_id = creator_id
+    async def add(self, creator_id: int, project_title: str = None) -> ProjectDM:
         if project_title is None:
             project_title = 'New project'
-        new_project.title = project_title
-        self.session.add(new_project)
+
+        project = (await self.session.scalars(
+            insert(ProjectModel).returning(ProjectModel),
+            [{'creator_id': creator_id, 'title': project_title}]
+        )).first()
+        project_dm = ProjectDM(
+            id=project.id,
+            title=project.title,
+            creator_id=project.creator_id,
+        )
         await self.session.commit()
-        # print(new_project.id, new_project.title)
+        return project_dm
 
     async def add_new_members(self, project_id: int, *new_member_ids: list[int]) -> None:
         """
@@ -29,13 +34,18 @@ class ProjectRepository:
         :return: no return.
         """
 
-        project = await self.get_by_id(project_id)
-        user_repository = UserRepository(self.session)
-        for new_member_id in new_member_ids:
-            member = await user_repository.get_by_id(new_member_id)
-            if member is not None:
-                project.members.append(member)
-                self.session.add(project)
+        stmt = select(ProjectModel).where(ProjectModel.id == project_id)
+        project = await self.session.scalar(stmt)
+        if project is None:
+            return
+        await self.session.execute(
+            insert(user_to_project_model),
+            [
+                {'user': new_member_id, 'project': project_id}
+                for new_member_id in new_member_ids
+                if await self.session.scalar(select(UserModel).where(UserModel.id == new_member_id)) is not None
+            ]
+        )
         await self.session.commit()
 
     async def get_by_id(self, project_id: int) -> ProjectDM:
@@ -45,10 +55,6 @@ class ProjectRepository:
             id=project.id,
             title=project.title,
             creator_id=project.creator_id,
-            members=[
-                MemberDM(id=member.id, name=member.name, image=member.image)
-                for member in project.members
-            ]
         )
 
     async def get_by_member_id(self, member_id: int) -> list[ProjectDM]:
@@ -59,10 +65,18 @@ class ProjectRepository:
                 id=project.id,
                 title=project.title,
                 creator_id=project.creator_id,
-                members=[
-                    MemberDM(id=member.id, name=member.name, image=member.image)
-                    for member in project.members
-                ]
             )
             for project in projects
+        ]
+
+    async def get_members(self, project_id: int) -> list[MemberDM]:
+        stmt = select(ProjectModel).where(ProjectModel.id == project_id)
+        project = await self.session.scalar(stmt)
+        return [
+            MemberDM(
+                id=member.id,
+                name=member.name,
+                image=member.image
+            )
+            for member in project.members
         ]

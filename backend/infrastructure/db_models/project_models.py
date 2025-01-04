@@ -7,7 +7,7 @@ from sqlalchemy_serializer import SerializerMixin
 
 from db_session import SqlAlchemyBase
 
-user_to_project = Table(
+user_to_project_model = Table(
     'user_to_project', SqlAlchemyBase.metadata,
     Column('user', Integer, ForeignKey('user.id')),
     Column('project', Integer, ForeignKey('project.id'))
@@ -21,7 +21,7 @@ class ProjectModel(SqlAlchemyBase, SerializerMixin):
     title: Mapped[str] = mapped_column(String(128), nullable=False)
     creator_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
 
-    members = relationship('UserModel', secondary=user_to_project, back_populates='projects')
+    members = relationship('UserModel', secondary=user_to_project_model, back_populates='projects')
     creator = relationship('UserModel', foreign_keys=[creator_id])
 
 
