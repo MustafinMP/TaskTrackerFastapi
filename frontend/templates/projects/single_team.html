@@ -7,7 +7,7 @@
 {% block title %}{{ team.name }}{% endblock %}
 
 {% block content %}
-<section class="team-card white-filled border-1r">
+<section class="project-card white-filled border-1r">
     <div class="member-images">
             {% for member in team.members %}
             {% if loop.index0 < 3 %}
@@ -31,7 +31,7 @@
 </section>
 
 <script>
-    let item = document.querySelector('#aside-navbar-teams');
+    let item = document.querySelector('#aside-navbar-projects');
     item.classList.remove('white-filled-with-hover');
     item.classList.add('dark-filled');
 </script>

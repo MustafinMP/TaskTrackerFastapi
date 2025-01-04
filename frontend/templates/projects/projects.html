@@ -1,0 +1,30 @@
+{% extends "basic_template_with_navbar.html" %}
+
+{% block title %}Мои команды{% endblock %}
+
+{% block links %}
+<link rel="stylesheet" href="../static/css/projects.css">
+<script type="module" src="../static/js/projects.js"></script>
+{% endblock %}
+
+{% block content %}
+<div id="projects">
+    <a v-for="project in projects" class="white-filled border-1r project-card" href="">
+        <h6>[[ project.title ]]</h6>
+        <div class="member-block">
+            <div class="member-images">
+
+            </div>
+            <div class="member-count">
+            </div>
+        </div>
+        <div class="tasks">team tasks count</div>
+    </a>
+</div>
+
+<script>
+    let item = document.querySelector('#aside-navbar-projects');
+    item.classList.remove('white-filled-with-hover');
+    item.classList.add('dark-filled');
+</script>
+{% endblock %}

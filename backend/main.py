@@ -12,6 +12,7 @@ from starlette.staticfiles import StaticFiles
 from presentation.routers.auth import router as auth_router
 from presentation.routers.project import router as team_router
 from presentation.pages.account_pages import router as auth_router_pages
+from presentation.pages.project_pages import router as project_router_pages
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -38,6 +39,7 @@ app.mount('/static', StaticFiles(directory='../frontend/static', html=False))
 app.include_router(auth_router, prefix='/api/v0')
 app.include_router(team_router, prefix='/api/v0')
 app.include_router(auth_router_pages)
+app.include_router(project_router_pages)
 
 
 if __name__ == '__main__':

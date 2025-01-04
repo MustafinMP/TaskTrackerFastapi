@@ -1,10 +1,10 @@
-.team-card {
+.project-card {
     display: block;
     padding: 1.2rem 2rem;
     margin-top: 2rem;
 }
 
-.team-card h6 {
+.project-card h6 {
     font-size: 1.5rem;
 }
 
