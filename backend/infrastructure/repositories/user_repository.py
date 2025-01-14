@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.db_models import UserModel
@@ -56,7 +56,8 @@ class UserRepository:
         :return: user object or none.
         """
 
-        stmt = select(UserModel).where(UserModel.oauth_yandex_id == yandex_id)  # .options(joinedload(UserModel.projects))
+        stmt = select(UserModel).where(
+            UserModel.oauth_yandex_id == yandex_id)  # .options(joinedload(UserModel.projects))
         user = await self.session.scalar(stmt)
         return UserDM(
             id=user.id,
@@ -74,23 +75,33 @@ class UserRepository:
     async def exist_by_email(self, email: str) -> bool:
         return self.get_by_email(email) is not None
 
-    async def add(self, name: str, email: str, hashed_password: str) -> int:
-        """Create new user by data from register form.
+    async def create(self, name: str, email: str, hashed_password: str) -> UserDM:
+        """Create a new user in database.
 
         :param name:
         :param email:
         :param hashed_password:
-        :return: no return.
+        :return: the new user. If user with current email is already exists, it returns None.
         """
         if await self.exist_by_email(email):
-            raise UserIsAlreadyExistsError
+            return None
 
-        user = UserModel()
-        user.name = name
-        user.email = email
-        user.hashed_password = hashed_password
-        self.session.add(user)
+        user = (await self.session.scalars(
+            insert(UserModel).returning(UserModel),
+            [{'name': name, 'email': email, 'hashed_password': hashed_password}]
+        )).first()
+
+        user_dm = UserDM(
+            id=user.id,
+            name=user.name,
+            email=user.email,
+            hashed_password=user.hashed_password,
+            created_at=user.created_date,
+            image=user.image,
+            yandex_id=None
+        )
         await self.session.commit()
+        return user_dm
 
     async def add_yandex_oauth_id(self, user_id: int, yandex_id: str) -> None:
         user = await self.get_by_id(user_id)
