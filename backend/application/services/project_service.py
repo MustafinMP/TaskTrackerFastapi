@@ -1,7 +1,6 @@
 import db_session
-from infrastructure.db_models.project_models import ProjectModel
-from infrastructure.entities.project import ProjectDM
-from infrastructure.repositories.project_repository import ProjectRepository
+from infrastructure.entities import ProjectDM
+from infrastructure.repositories import ProjectRepository
 
 
 class ProjectService:

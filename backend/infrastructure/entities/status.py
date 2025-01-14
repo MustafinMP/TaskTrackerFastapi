@@ -3,7 +3,7 @@ from typing import Optional
 
 
 @dataclass
-class StatusDTO:
+class StatusDM:
     id: int
     name: str
     color_tag: Optional[str]

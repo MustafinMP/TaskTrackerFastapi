@@ -2,9 +2,8 @@ from sqlalchemy import select, update, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from infrastructure.db_models.task_models import TaskModel, TagModel
-from infrastructure.db_models.project_models import ProjectModel
-from infrastructure.entities.task import CreateTaskDM, TaskToTagRelationDM, UpdateTaskDM
+from infrastructure.db_models import TaskModel, TagModel, ProjectModel
+from infrastructure.entities import CreateTaskDM, TaskToTagRelationDM, UpdateTaskDM
 
 
 class TaskRepository:
@@ -67,7 +66,7 @@ class TaskRepository:
         # ).options(
         #     joinedload(Task.creator)
         # ))
-        return await self.session.scalar(stmt)
+        return await self.session.scalar(stmt)  # !!!
 
     async def get_by_status(self, status_id: int, team_id: int) -> list[TaskModel, ...]:
         """Find tasks by their status.
@@ -82,7 +81,7 @@ class TaskRepository:
         ).join(TaskModel.project).filter(
             ProjectModel.id == team_id
         )
-        return (await self.session.scalars(stmt)).unique().all()
+        return (await self.session.scalars(stmt)).unique().all()  # !!!
 
     async def get_by_team_id(self, team_id: int) -> list[TaskModel, ...]:
         stmt = select(TaskModel).join(TaskModel.project).filter(
@@ -91,7 +90,7 @@ class TaskRepository:
             joinedload(TaskModel.creator)
         )
 
-        return (await self.session.scalars(stmt)).unique()
+        return (await self.session.scalars(stmt)).unique()  # !!!
 
     async def count_by_team_id(self, team_id: int) -> int:
         stmt = select(func.count()).select_from(TaskModel).join(TaskModel.project).filter(
@@ -121,7 +120,7 @@ class TaskRepository:
             TaskModel.id == new_task_data.id,
         ).values(**values)
         await self.session.execute(stmt)
-        await self.session.commit()
+        await self.session.commit()  # !!!
 
     async def update_object(
             self,
@@ -137,7 +136,7 @@ class TaskRepository:
         if new_status_id is not None:
             task.status_id = new_status_id
         await self.session.merge(task)
-        await self.session.commit()
+        await self.session.commit()  # !!!
 
     async def delete_by_id(self, task_id: int) -> None:
         """Delete the task from database by id.
@@ -150,8 +149,8 @@ class TaskRepository:
             TaskModel.id == task_id
         )
         await self.session.execute(stmt)
-        await self.session.commit()
+        await self.session.commit()  # !!!
 
     async def delete_object(self, task: TaskModel) -> None:
         await self.session.delete(task)
-        await self.session.commit()
+        await self.session.commit()  # !!!

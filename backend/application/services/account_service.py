@@ -1,11 +1,10 @@
-from __future__ import annotations
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from starlette import status
 
 import db_session
-from application.services.password_hasher import PasswordHasher
-from infrastructure.entities.user import UserDM
-from infrastructure.repositories.user_repository import UserRepository
+from application.services import PasswordHasher
+from infrastructure.entities import UserDM
+from infrastructure.repositories import UserRepository
 from presentation.schemas.user_schemas import AddUserSchema
 
 

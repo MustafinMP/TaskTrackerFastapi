@@ -1,14 +1,11 @@
 from fastapi import Depends
 
 import db_session
-from infrastructure.entities.status import StatusDTO
-from infrastructure.db_models.user_models import UserModel
-from application.services.account_service import UserService
+from infrastructure.entities import StatusDM
+from infrastructure.db_models import UserModel, StatusModel, TaskModel  # !!!
+from application.services import UserService, ProjectService
 from application.exceptions.task_exceptions import TaskDoesNotExistError, UserPermissionError
-from infrastructure.db_models.task_models import StatusModel, TaskModel
-from infrastructure.repositories.status import StatusRepository
-from infrastructure.repositories.task_repository import TaskRepository
-from application.services.project_service import ProjectService
+from infrastructure.repositories import StatusRepository, TaskRepository
 
 
 class TaskService:
@@ -69,5 +66,5 @@ class StatusService:
         with db_session.create_session() as session:
             self._repository = StatusRepository(session)
 
-    def get_statuses(self) -> list[StatusDTO]:
+    def get_statuses(self) -> list[StatusDM]:
         return self._repository.get_all()

@@ -2,7 +2,6 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey, orm, Table
 from sqlalchemy.orm import validates
-from sqlalchemy_serializer import SerializerMixin
 
 from db_session import SqlAlchemyBase
 
@@ -17,7 +16,7 @@ color_tags: tuple[str] = tuple(
 )
 
 
-class TaskModel(SqlAlchemyBase, SerializerMixin):
+class TaskModel(SqlAlchemyBase):
     __tablename__ = 'task'
     id: int = Column(Integer, primary_key=True, autoincrement=True, index=True)
     name: str = Column(String, nullable=False)
@@ -33,7 +32,7 @@ class TaskModel(SqlAlchemyBase, SerializerMixin):
     project = orm.relationship('ProjectModel', foreign_keys=[project_id], backref='tasks', lazy="joined")
 
 
-class StatusModel(SqlAlchemyBase, SerializerMixin):
+class StatusModel(SqlAlchemyBase):
     __tablename__ = 'status'
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     name: str = Column(String(length=50), nullable=False)
@@ -46,7 +45,7 @@ class StatusModel(SqlAlchemyBase, SerializerMixin):
         return value
 
 
-class TagModel(SqlAlchemyBase, SerializerMixin):
+class TagModel(SqlAlchemyBase):
     __tablename__ = 'tag'
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     name: str = Column(String(length=50), nullable=False)

@@ -1,12 +1,9 @@
-from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
 
-from db_session import create_session
-from infrastructure.entities.user import UserDM
+from infrastructure.db_models import UserModel
+from infrastructure.entities import UserDM
 from infrastructure.exceptions.user_exceptions import UserIsAlreadyExistsError
-from infrastructure.db_models.user_models import UserModel
 
 
 class UserRepository:
@@ -30,7 +27,7 @@ class UserRepository:
             created_at=user.created_date,
             image=user.image,
             yandex_id=user.oauth_yandex_id
-        )
+        ) if user else None
 
     async def get_by_email(self, user_email: str) -> UserDM | None:
         """Find user in database by email.
@@ -69,7 +66,13 @@ class UserRepository:
             created_at=user.created_date,
             image=user.image,
             yandex_id=user.oauth_yandex_id
-        )
+        ) if user else None
+
+    async def exist_by_id(self, user_id: int) -> bool:
+        return self.get_by_id(user_id) is not None
+
+    async def exist_by_email(self, email: str) -> bool:
+        return self.get_by_email(email) is not None
 
     async def add(self, name: str, email: str, hashed_password: str) -> int:
         """Create new user by data from register form.
@@ -79,8 +82,7 @@ class UserRepository:
         :param hashed_password:
         :return: no return.
         """
-        if await self.get_by_email(email) is not None:
-            print(self.get_by_email(email))
+        if await self.exist_by_email(email):
             raise UserIsAlreadyExistsError
 
         user = UserModel()

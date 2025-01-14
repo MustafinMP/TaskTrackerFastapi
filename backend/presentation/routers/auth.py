@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Form, Depends
 from starlette.responses import Response, RedirectResponse
 
-from application.services.auth_service import AuthService
+from application.services import AuthService
 from presentation.cookie_manager import CookieManager
 from presentation.schemas.user_schemas import RegisterFormSchema, LoginFormSchema
 from config import YANDEX_API_REQUEST

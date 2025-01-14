@@ -32,19 +32,3 @@ class UserModel(SqlAlchemyBase, SerializerMixin):
     projects = relationship('ProjectModel', secondary='user_to_project', back_populates='members')
 
     oauth_yandex_id: Mapped[Optional[str]] = mapped_column(String, unique=True, nullable=True)
-
-    def set_password(self, password: str) -> None:
-        """Create hash of user password and save it.
-
-        :param password: no hashed password.
-        :return: no return.
-        """
-        self.hashed_password = generate_password_hash(password)
-
-    def check_password(self, password: str) -> bool:
-        """Check that the user password is valid.
-
-        :param password: no hashed password.
-        :return: result of checking.
-        """
-        return check_password_hash(self.hashed_password, password)

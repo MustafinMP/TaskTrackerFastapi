@@ -1,16 +1,9 @@
-import requests
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException
 from starlette import status
 
-import db_session
-from application.services.password_hasher import PasswordHasher
-from infrastructure.db_models.user_models import UserModel
-from infrastructure.entities.user import UserDM
-from infrastructure.repositories.user_repository import UserRepository
+from application.services import UserService, PasswordHasher
+from infrastructure.entities import UserDM
 from presentation.schemas.user_schemas import LoginFormSchema, RegisterFormSchema
-from application.services.account_service import UserService
-from config import YA_CLIENT_ID, YA_CLIENT_SECRET
-from application.services.project_service import ProjectService
 
 
 class AuthService:

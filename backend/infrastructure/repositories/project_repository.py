@@ -1,9 +1,8 @@
 from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infrastructure.db_models.user_models import UserModel
-from infrastructure.entities.project import ProjectDM, MemberDM
-from infrastructure.db_models.project_models import ProjectModel, user_to_project_model
+from infrastructure.db_models import UserModel, ProjectModel, user_to_project_model
+from infrastructure.entities import ProjectDM, MemberDM
 
 
 class ProjectRepository:
@@ -55,7 +54,7 @@ class ProjectRepository:
             id=project.id,
             title=project.title,
             creator_id=project.creator_id,
-        )
+        ) if project else None
 
     async def get_by_member_id(self, member_id: int) -> list[ProjectDM]:
         projects_stmt = select(ProjectModel).join(ProjectModel.members).filter(UserModel.id == member_id)
