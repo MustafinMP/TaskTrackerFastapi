@@ -1,6 +1,3 @@
-from fastapi import HTTPException
-from starlette import status
-
 import db_session
 from application.exceptions import EmailIsAlreadyExists
 from application.services import PasswordHasher
@@ -34,7 +31,7 @@ class UserService:
         hashed_password = PasswordHasher().hash_password(user_data.password)
         async with db_session.create_session() as session:
             repository = UserRepository(session)
-            if repository.exist_by_email(user_data.email):
+            if await repository.exist_by_email(user_data.email):
                 raise EmailIsAlreadyExists
             user = await repository.create(
                 user_data.name,

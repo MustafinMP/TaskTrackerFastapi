@@ -27,45 +27,13 @@
         <input v-model="password_again" name="password_again" placeholder="Enter password again" class="form-control"
                type="password"/><br>
     </div>
-    <button class="form-button primary-filled" type="submit">Зарегистрироваться</button>
+    <button class="form-button primary-filled" @click="sendForm(name, email, password, password_again)">
+        Зарегистрироваться
+    </button>
     <hr width="100%" size="2">
     <a href="/auth/login" class="login-a light-filled">
         Войти в Lite Tracker
     </a>
 </form>
-<script type="module">
-    import {createApp} from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
-
-    createApp({
-        data() {
-            return {
-                name: '',
-                email: '',
-                password: '',
-                password_again: ''
-            }
-        },
-        delimiters: ["[[", "]]"],
-        compilerOptions: {
-            delimiters: ["[[", "]]"]
-        },
-        methods: {
-            sendForm(name, email, password, password_again) {
-                fetch('http://localhost:8000/api/v0/auth/register', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        name: name,
-                        email: email,
-                        password: password,
-                        password_again: password_again
-                    }),
-                    headers: {'Content-Type': 'application/json'}
-                });
-                {
-
-                }
-            }
-        }
-    }).mount('#form')
-</script>
+<script type="module" src="../static/js/register.js"></script>
 {% endblock %}

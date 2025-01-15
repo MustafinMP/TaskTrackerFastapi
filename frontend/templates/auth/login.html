@@ -11,14 +11,14 @@
     <h1>Вход</h1>
     <div>
         Email<br>
-        <input name="email" placeholder="Enter email" class="form-control" type="email"/><br>
+        <input v-model="email" name="email" placeholder="Enter email" class="form-control" type="email"/><br>
     </div>
     <div>
         Password<br>
-        <input name="password" placeholder="Enter password" class="form-control"
+        <input v-model="password" name="password" placeholder="Enter password" class="form-control"
                type="password"/><br>
     </div>
-    <button class="form-button primary-filled" type="submit">Войти</button>
+    <button class="form-button primary-filled" @click="sendForm(email, password)">Войти</button>
     <hr width="100%" size="2">
     <a href="/auth/register" class="register-a light-filled">
         Зарегистрироваться
@@ -32,4 +32,5 @@
         </a>
     </section>
 </form>
+<script type="module" src="../static/js/login.js"></script>
 {% endblock %}

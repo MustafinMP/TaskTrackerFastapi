@@ -75,7 +75,7 @@ class TaskRepository:
             created_date=task.created_date,
             deadline=task.deadline,
             status_id=task.status_id
-        )
+        ) if task else None
 
     async def get_by_status(self, status_id: int) -> list[TaskDM]:
         """Find tasks by their status.
@@ -121,7 +121,7 @@ class TaskRepository:
             for task in tasks
         ]
 
-    async def update_by_id(
+    async def update(
             self,
             new_task_data: UpdateTaskDM
     ) -> TaskDM | None:
@@ -133,6 +133,9 @@ class TaskRepository:
 
         values = asdict(new_task_data)
         del values['id']
+        for key, value in values.items():
+            if value is None:
+                del values[key]
 
         stmt = update(TaskModel).where(
             TaskModel.id == new_task_data.id,

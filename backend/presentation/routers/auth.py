@@ -24,7 +24,7 @@ async def register(
 ):
     try:
         await AuthService().register_user(form)
-        return RedirectResponse('/auth/login')
+        return RedirectResponse('/auth/login', )
     except EmailIsAlreadyExists:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

@@ -72,7 +72,7 @@ class UserRepository:
         return self.get_by_id(user_id) is not None
 
     async def exist_by_email(self, email: str) -> bool:
-        return self.get_by_email(email) is not None
+        return await self.get_by_email(email) is not None
 
     async def create(self, name: str, email: str, hashed_password: str) -> UserDM:
         """Create a new user in database.
