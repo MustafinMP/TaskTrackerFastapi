@@ -1,4 +1,4 @@
 from infrastructure.repositories.project_repository import ProjectRepository
-from infrastructure.repositories.status import StatusRepository
+from infrastructure.repositories.status_repository import StatusRepository
 from infrastructure.repositories.task_repository import TaskRepository
 from infrastructure.repositories.user_repository import UserRepository
