@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.db_models import UserModel
 from infrastructure.entities import UserDM
-from infrastructure.exceptions.user_exceptions import UserIsAlreadyExistsError
 
 
 class UserRepository:

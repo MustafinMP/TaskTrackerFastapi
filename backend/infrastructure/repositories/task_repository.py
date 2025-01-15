@@ -1,36 +1,40 @@
-from sqlalchemy import select, update, delete, func
+from dataclasses import asdict
+
+from sqlalchemy import select, update, delete, func, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from infrastructure.db_models import TaskModel, TagModel, ProjectModel
-from infrastructure.entities import CreateTaskDM, TaskToTagRelationDM, UpdateTaskDM
+from infrastructure.entities import CreateTaskDM, TaskToTagRelationDM, UpdateTaskDM, TaskDM
 
 
 class TaskRepository:
     def __init__(self, session: AsyncSession):
         self.session: AsyncSession = session
 
-    async def add(
-            self,
-            task: CreateTaskDM
-    ) -> None:
+    async def add(self, task_data: CreateTaskDM) -> None:
         """Create new task and save it to database.
 
-        :param task:
+        :param task_data:
         :return: no return.
         """
 
-        task_model = TaskModel()
-        task_model.name = task.name
-        task_model.description = task.description
-        task_model.project_id = task.team_id
-        if task.deadline is not None:
-            task_model.deadline = task.deadline
-        if task.status_id is not None:
-            task_model.status_id = task.status_id
-        task_model.creator_id = task.creator_id
-        self.session.add(task_model)
+        task = (await self.session.scalars(
+            insert(TaskModel).returning(TaskModel),
+            [asdict(task_data)]
+        )).first()
+        task_dm = TaskDM(
+            id=task.id,
+            title=task.name,
+            description=task.description,
+            project_id=task.project_id,
+            creator_id=task.creator_id,
+            created_date=task.created_date,
+            deadline=task.deadline,
+            status_id=task.status_id
+        )
         await self.session.commit()
+        return task_dm
 
     async def add_tag_to_task(self, relation: TaskToTagRelationDM) -> None:
         """Add tag to task.
@@ -50,7 +54,7 @@ class TaskRepository:
         tag.tasks.append(task)
         await self.session.commit()
 
-    async def get_by_id(self, task_id: int) -> TaskModel | None:
+    async def get_by_id(self, task_id: int) -> TaskDM | None:
         """Find task by id.
 
         :param task_id:
@@ -61,82 +65,81 @@ class TaskRepository:
         stmt = select(TaskModel).where(
             TaskModel.id == task_id
         )
-        # .join(Task.team).filter(
-        #     Team.id == team_id
-        # ).options(
-        #     joinedload(Task.creator)
-        # ))
-        return await self.session.scalar(stmt)  # !!!
+        task: TaskModel = await self.session.scalar(stmt)
+        return TaskDM(
+            id=task.id,
+            title=task.name,
+            description=task.description,
+            project_id=task.project_id,
+            creator_id=task.creator_id,
+            created_date=task.created_date,
+            deadline=task.deadline,
+            status_id=task.status_id
+        )
 
-    async def get_by_status(self, status_id: int, team_id: int) -> list[TaskModel, ...]:
+    async def get_by_status(self, status_id: int) -> list[TaskDM]:
         """Find tasks by their status.
 
-        :param team_id: the id of team.
         :param status_id: the id of task status.
         :return: list of tasks with current status.
         """
 
         stmt = select(TaskModel).where(
             TaskModel.status_id == status_id
-        ).join(TaskModel.project).filter(
-            ProjectModel.id == team_id
         )
-        return (await self.session.scalars(stmt)).unique().all()  # !!!
+        tasks: list[TaskModel] = (await self.session.scalars(stmt)).unique().all()
+        return [
+            TaskDM(
+                id=task.id,
+                title=task.name,
+                description=task.description,
+                project_id=task.project_id,
+                creator_id=task.creator_id,
+                created_date=task.created_date,
+                deadline=task.deadline,
+                status_id=task.status_id
+            )
+            for task in tasks
+        ]
 
-    async def get_by_team_id(self, team_id: int) -> list[TaskModel, ...]:
+    async def get_by_project_id(self, project_id: int) -> list[TaskDM]:
         stmt = select(TaskModel).join(TaskModel.project).filter(
-            ProjectModel.id == team_id
-        ).options(
-            joinedload(TaskModel.creator)
+            ProjectModel.id == project_id
         )
-
-        return (await self.session.scalars(stmt)).unique()  # !!!
-
-    async def count_by_team_id(self, team_id: int) -> int:
-        stmt = select(func.count()).select_from(TaskModel).join(TaskModel.project).filter(
-            ProjectModel.id == team_id
-        )
-        return await self.session.scalar(stmt)
+        tasks: list[TaskModel] = (await self.session.scalars(stmt)).unique().all()
+        return [
+            TaskDM(
+                id=task.id,
+                title=task.name,
+                description=task.description,
+                project_id=task.project_id,
+                creator_id=task.creator_id,
+                created_date=task.created_date,
+                deadline=task.deadline,
+                status_id=task.status_id
+            )
+            for task in tasks
+        ]
 
     async def update_by_id(
             self,
             new_task_data: UpdateTaskDM
-    ) -> None:
+    ) -> TaskDM | None:
         """Update information about current task.
 
         :param new_task_data:
         :return: no return.
         """
 
-        values = dict()
-        if new_task_data.name:
-            values['name'] = new_task_data.name
-        if new_task_data.description:
-            values['description'] = new_task_data.description
-        if new_task_data.status_id:
-            values['status_id'] = new_task_data.status_id
+        values = asdict(new_task_data)
+        del values['id']
 
         stmt = update(TaskModel).where(
             TaskModel.id == new_task_data.id,
         ).values(**values)
         await self.session.execute(stmt)
-        await self.session.commit()  # !!!
-
-    async def update_object(
-            self,
-            task: TaskModel,
-            new_name: str = None,
-            new_description: str = None,
-            new_status_id: int = None
-    ) -> None:
-        if new_name:
-            task.name = new_name
-        if new_description:
-            task.description = new_description
-        if new_status_id is not None:
-            task.status_id = new_status_id
-        await self.session.merge(task)
-        await self.session.commit()  # !!!
+        await self.session.commit()
+        return self.get_by_id(new_task_data.id)  # доделать проверку на существование задачи и статуса
 
     async def delete_by_id(self, task_id: int) -> None:
         """Delete the task from database by id.
@@ -149,8 +152,4 @@ class TaskRepository:
             TaskModel.id == task_id
         )
         await self.session.execute(stmt)
-        await self.session.commit()  # !!!
-
-    async def delete_object(self, task: TaskModel) -> None:
-        await self.session.delete(task)
-        await self.session.commit()  # !!!
+        await self.session.commit()

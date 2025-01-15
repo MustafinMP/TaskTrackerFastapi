@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey, orm, Table
 from sqlalchemy.orm import validates
@@ -23,7 +24,7 @@ class TaskModel(SqlAlchemyBase):
     description: str = Column(String, nullable=True)
     creator_id: int = Column(Integer, ForeignKey('user.id'), nullable=True, index=True)
     created_date: datetime = Column(TIMESTAMP, default=datetime.now)
-    deadline: datetime = Column(TIMESTAMP, nullable=True)
+    deadline: Optional[datetime] = Column(TIMESTAMP, nullable=True)
     status_id: int = Column(Integer, ForeignKey('status.id'), default=0, nullable=False)
     project_id: int = Column(Integer, ForeignKey('project.id'), nullable=True)
 

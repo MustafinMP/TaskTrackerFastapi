@@ -6,10 +6,22 @@ from typing import Optional
 
 @dataclass
 class CreateTaskDM:
-    name: str
+    title: str
     description: str
     creator_id: int
-    team_id: int
+    project_id: int
+    deadline: Optional[datetime]
+    status_id: Optional[int]
+
+
+@dataclass
+class TaskDM:
+    id: int
+    title: str
+    description: str
+    project_id: int
+    creator_id: int
+    created_date: datetime
     deadline: Optional[datetime]
     status_id: Optional[int]
 
@@ -17,10 +29,10 @@ class CreateTaskDM:
 @dataclass
 class UpdateTaskDM:
     id: int
-    name: Optional[str]
+    title: Optional[str]
     description: Optional[str]
     status_id: Optional[int]
-    # deadline: Optional[datetime]
+    deadline: Optional[datetime]
 
 
 @dataclass

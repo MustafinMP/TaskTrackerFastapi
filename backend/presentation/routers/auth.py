@@ -1,8 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Form, Depends
+from fastapi import APIRouter, Form, Depends, HTTPException
+from starlette import status
 from starlette.responses import Response, RedirectResponse
 
+from application.exceptions import EmailIsAlreadyExists, WrongPassword
 from application.services import AuthService
 from presentation.cookie_manager import CookieManager
 from presentation.schemas.user_schemas import RegisterFormSchema, LoginFormSchema
@@ -20,8 +22,19 @@ SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 async def register(
         form: Annotated[RegisterFormSchema, Form()]
 ):
-    await AuthService().register_user(form)
-    return RedirectResponse('/auth/login')
+    try:
+        await AuthService().register_user(form)
+        return RedirectResponse('/auth/login')
+    except EmailIsAlreadyExists:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail='Данный email уже зарегистрирован'
+        )
+    except WrongPassword:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail='Пароли не совпадают'
+        )
 
 
 @router.post('/login')

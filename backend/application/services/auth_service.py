@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from starlette import status
 
+from application.exceptions import EmailIsAlreadyExists, WrongPassword
 from application.services import UserService, PasswordHasher
 from infrastructure.entities import UserDM
 from presentation.schemas.user_schemas import LoginFormSchema, RegisterFormSchema
@@ -27,11 +28,12 @@ class AuthService:
 
     async def register_user(self, form: RegisterFormSchema) -> None:
         if form.password != form.password_again:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail='Пароли не совпадают'
-            )
-        user = await self._user_service.add_user(form)
+            raise WrongPassword
+        try:
+            user = await self._user_service.add_user(form)
+            return user
+        except EmailIsAlreadyExists:
+            raise EmailIsAlreadyExists
         # await ProjectService.add_project(user)
 
     # @staticmethod
