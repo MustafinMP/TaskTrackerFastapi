@@ -3,7 +3,7 @@ from application.exceptions import EmailIsAlreadyExists
 from application.services import PasswordHasher
 from infrastructure.entities import UserDM
 from infrastructure.repositories import UserRepository
-from presentation.schemas.user_schemas import AddUserSchema
+from presentation.schemas import AddUserSchema
 
 
 class UserService:

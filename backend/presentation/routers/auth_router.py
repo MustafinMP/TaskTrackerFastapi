@@ -7,7 +7,7 @@ from starlette.responses import Response, RedirectResponse
 from application.exceptions import EmailIsAlreadyExists, WrongPassword
 from application.services import AuthService
 from presentation.cookie_manager import CookieManager
-from presentation.schemas.user_schemas import RegisterFormSchema, LoginFormSchema
+from presentation.schemas import RegisterFormSchema, LoginFormSchema
 from config import YANDEX_API_REQUEST
 
 router = APIRouter(

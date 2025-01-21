@@ -16,4 +16,4 @@ def projects(request: Request):
 
 @router.get('/{project_id}')
 def project(request: Request, project_id: int):
-    return templates.TemplateResponse('projects/project.html', {'request': request})
+    return templates.TemplateResponse(name='projects/project.html', request=request, context={'project_id': project_id})

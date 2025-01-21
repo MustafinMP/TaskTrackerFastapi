@@ -3,3 +3,4 @@ from application.services.account_service import UserService
 from application.services.auth_service import AuthService
 from application.services.project_service import ProjectService
 from application.services.status_service import StatusService
+from application.services.task_service import TaskService

@@ -4,7 +4,7 @@ from starlette import status
 from application.exceptions import EmailIsAlreadyExists, WrongPassword
 from application.services import UserService, PasswordHasher
 from infrastructure.entities import UserDM
-from presentation.schemas.user_schemas import LoginFormSchema, RegisterFormSchema
+from presentation.schemas import LoginFormSchema, RegisterFormSchema
 
 
 class AuthService:

@@ -2,32 +2,14 @@
 
 {% block links %}
 <link rel="stylesheet" href="../static/css/project.css">
+<script type="module" src="../static/js/project.js"></script>
 {% endblock %}
 
-{% block title %}{{ team.name }}{% endblock %}
+{% block title %}None{% endblock %}
 
 {% block content %}
-<section class="project-card white-filled border-1r">
-    <div class="member-images">
-            {% for member in team.members %}
-            {% if loop.index0 < 3 %}
-            <img src="{% if member.image %} ../static/uploads/{{ member.image }}
-                    {% else %} ../static/img/default.png
-                    {% endif %}"/>
-            {% endif %}
-            {% endfor %}
-        </div>
-        <div class="member-count">
-            {% set m_count = team.members|length %}
-            <span class="member-count-num">{{ m_count }}</span>
-            {% if m_count % 10 == 1 %}
-            участник
-            {% elif m_count % 10 > 1 and m_count < 5 %}
-            участника
-            {% else %}
-            участников
-            {% endif %}
-        </div>
+<section id="project" class="project-card white-filled border-1r">
+    <SingleProject project-id="{{ project_id }}"></SingleProject>
 </section>
 
 <script>

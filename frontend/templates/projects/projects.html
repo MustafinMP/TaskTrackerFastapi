@@ -9,18 +9,9 @@
 
 {% block content %}
 <div id="projects">
-    <a v-for="project in projects" class="white-filled border-1r project-card" :href="[[ project.id ]]">
-        <h6>Project title[[ project.title ]]</h6>
-        <div class="member-block">
-            <div class="member-images">
-
-            </div>
-            <div class="member-count">
-            </div>
-        </div>
-        <div class="tasks">team tasks count</div>
-    </a>
+    <ProjectsComponent></ProjectsComponent>
 </div>
+
 
 <script>
     let item = document.querySelector('#aside-navbar-projects');

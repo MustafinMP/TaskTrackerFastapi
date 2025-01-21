@@ -39,3 +39,9 @@ class UpdateTaskDM:
 class TaskToTagRelationDM:
     task_id: int
     tag_id: int
+
+
+@dataclass
+class TagDM:
+    id: int
+    name: str

@@ -1,8 +1,7 @@
 from dataclasses import asdict
 
-from sqlalchemy import select, update, delete, func, insert
+from sqlalchemy import select, update, delete, insert
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
 
 from infrastructure.db_models import TaskModel, TagModel, ProjectModel
 from infrastructure.entities import CreateTaskDM, TaskToTagRelationDM, UpdateTaskDM, TaskDM
@@ -12,7 +11,7 @@ class TaskRepository:
     def __init__(self, session: AsyncSession):
         self.session: AsyncSession = session
 
-    async def add(self, task_data: CreateTaskDM) -> None:
+    async def create(self, task_data: CreateTaskDM) -> None:
         """Create new task and save it to database.
 
         :param task_data:

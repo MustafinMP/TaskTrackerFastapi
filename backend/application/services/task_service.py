@@ -1,8 +1,11 @@
 import db_session
-from infrastructure.entities import TaskDM, UpdateTaskDM
+from infrastructure.entities import TaskDM, UpdateTaskDM, CreateTaskDM
 from application.services import ProjectService
 from application.exceptions.task_exceptions import TaskDoesNotExistError, UserPermissionError
 from infrastructure.repositories import TaskRepository
+
+
+DEFAULT_TASK_STATUS = 0
 
 
 class TaskService:
@@ -18,8 +21,7 @@ class TaskService:
             return tasks
 
     @staticmethod
-    async def get_task_by_id(task_id: int,
-                             user_id: int) -> TaskDM:
+    async def get_task_by_id(task_id: int, user_id: int) -> TaskDM:
         with db_session.create_session() as session:
             task_repository = TaskRepository(session)
             task = await task_repository.get_by_id(task_id)
@@ -28,6 +30,26 @@ class TaskService:
         if not ProjectService.is_user_project(user_id, task.project_id):
             raise UserPermissionError
         return task
+
+    @staticmethod
+    async def get_tasks_by_project_id(project_id: int, user_id: int) -> TaskDM:
+        if not ProjectService.is_user_project(user_id, project_id):
+            raise UserPermissionError
+        with db_session.create_session() as session:
+            repository = TaskRepository(session)
+            tasks = await repository.get_by_project_id(project_id)
+            return tasks
+
+    @staticmethod
+    async def create_task(task: CreateTaskDM):
+        if not ProjectService.is_user_project(task.creator_id, task.project_id):
+            raise UserPermissionError
+        with db_session.create_session() as session:
+            repository = TaskRepository(session)
+            if task.status_id is None:
+                task.status_id = DEFAULT_TASK_STATUS
+            task = await repository.create(task)
+            return task
 
     @staticmethod
     async def update_task(
