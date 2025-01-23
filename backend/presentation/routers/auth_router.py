@@ -20,11 +20,11 @@ SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 
 @router.post('/register')
 async def register(
-        form: Annotated[RegisterFormSchema, Form()]
+        form: RegisterFormSchema
 ):
     try:
         await AuthService().register_user(form)
-        return RedirectResponse('/auth/login', )
+        return
     except EmailIsAlreadyExists:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -39,8 +39,8 @@ async def register(
 
 @router.post('/login')
 async def login_cookie(
+        form: LoginFormSchema,
         response: Response,
-        form: Annotated[LoginFormSchema, Form()],
         cookie_manager: CookieManager = Depends(CookieManager)
 ):
     user_id = await AuthService().login_user_for_id(form)

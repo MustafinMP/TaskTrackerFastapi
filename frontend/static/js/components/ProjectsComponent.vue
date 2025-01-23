@@ -24,20 +24,20 @@ export default {
 </script>
 
 <template>
-<!--  <section>-->
+  <section>
     <article class="white-filled border-1r">Мои проекты!</article>
-<!--    <a v-for="projects in projects" class="white-filled border-1r projects-card" :href="[[ projects.id ]]">-->
-<!--      <h6>Project title[[ projects.title ]]</h6>-->
-<!--      <div class="member-block">-->
-<!--        <div class="member-images">-->
+    <a v-for="projects in projects" class="white-filled border-1r projects-card" :href="[[ projects.id ]]">
+      <h6>Project title[[ projects.title ]]</h6>
+      <div class="member-block">
+        <div class="member-images">
 
-<!--        </div>-->
-<!--        <div class="member-count">-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="tasks">team tasks count</div>-->
-<!--    </a>-->
-<!--  </section>-->
+        </div>
+        <div class="member-count">
+        </div>
+      </div>
+      <div class="tasks">team tasks count</div>
+    </a>
+  </section>
 
 </template>
 

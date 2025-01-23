@@ -21,6 +21,7 @@ export default {
   }
 
 }
+
 </script>
 
 <template>
@@ -42,5 +43,7 @@ export default {
 </template>
 
 <style scoped>
-
+#aside-navbar-projects {
+  @extend .dark-filled;
+}
 </style>

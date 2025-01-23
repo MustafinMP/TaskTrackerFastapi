@@ -3,9 +3,7 @@ import logging
 import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
-from starlette.templating import Jinja2Templates
 
 from presentation.routers import auth_router, project_router, task_router
 from presentation.pages import auth_router_pages, project_router_pages
@@ -18,6 +16,8 @@ origins = [
     "http://localhost",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
 app.add_middleware(

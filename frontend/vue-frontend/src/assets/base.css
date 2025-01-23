@@ -1,0 +1,41 @@
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    margin: 0;
+    width: 100%;
+    padding: 0;
+}
+
+.main-with-navbar {
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    margin: 0;
+    padding: 0;
+}
+
+.border-1r {
+    border-radius: 1rem;
+}
+
+.border-05r {
+    border-radius: 0.5rem;
+}
+
+.border-025r {
+    border-radius: 0.25rem;
+}
+
+.main-content {
+    margin: 0 4rem 0 4rem;
+}
+
+.tasks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4rem;
+}
+
+.form-card {
+    border-radius: 1.5rem;
+    margin: 0 24rem 0 8rem;
+    padding: 1.5rem;
+}
