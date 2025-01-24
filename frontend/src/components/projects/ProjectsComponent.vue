@@ -8,10 +8,6 @@ export default {
   created() {
     this.fetchData();
   },
-  delimiters: ["[[", "]]"],
-  compilerOptions: {
-    delimiters: ["[[", "]]"]
-  },
   methods: {
     fetchData() {
       fetch('http://127.0.0.1:8000/api/v0/projects/all').then(response => response.json())
@@ -21,7 +17,6 @@ export default {
   }
 
 }
-
 </script>
 
 <template>

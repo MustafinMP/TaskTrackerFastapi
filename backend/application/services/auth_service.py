@@ -27,7 +27,7 @@ class AuthService:
         return user.id
 
     async def register_user(self, form: RegisterFormSchema) -> None:
-        if form.password != form.password_again:
+        if form.password != form.password_confirmation:
             raise WrongPassword
         try:
             user = await self._user_service.add_user(form)

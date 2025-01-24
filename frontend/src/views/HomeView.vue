@@ -10,16 +10,6 @@ import PageHeader from "@/components/PageHeader.vue";
       <PageHeader header-text="Home page" />
       <div class="main-content">
         <div>Content</div>
-        <div>Content</div>
-        <div>Content</div>
-        <div>Content</div>
-        <div>Content</div>
-        <div>Content</div>
-        <div>Content</div>
-        <div>Content</div>
-        <div>Content</div>
-        <div>Content</div>
-        <div>Content</div>
 
       </div>
     </div>

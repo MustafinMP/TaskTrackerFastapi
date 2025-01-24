@@ -1,15 +1,34 @@
-<script setup lang="ts">
+<script lang="ts">
+import router from "@/router";
 
+export default{
+  data() {
+    return {
+      email: '',
+      password: '',
+    }
+  },
+  methods: {
+    sendForm(email: any, password: string) {
+      let data = {
+        email: email,
+        password: password
+      };
+      console.log(data);
+      fetch('http://127.0.0.1:8000/api/v0/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {'Content-Type': 'application/json'}
+      });
+      router.push('/');
+    }
+  }
+}
 </script>
 
 <template>
-  <form action="http://localhost:8000/api/v0/auth/register" method="post" class="auth-form needs-validation white-filled"
-        enctype="multipart/form-data">
-    <h1>Регистрация</h1>
-    <div>
-      Name<br>
-      <input v-model="name" name="name" placeholder="Enter name" class="form-control"/><br>
-    </div>
+  <div class="auth-form needs-validation white-filled">
+    <h1>Вход</h1>
     <div>
       Email<br>
       <input v-model="email" name="email" placeholder="Enter email" class="form-control" type="email"/><br>
@@ -19,19 +38,20 @@
       <input v-model="password" name="password" placeholder="Enter password" class="form-control"
              type="password"/><br>
     </div>
-    <div>
-      Password<br>
-      <input v-model="password_again" name="password_again" placeholder="Enter password again" class="form-control"
-             type="password"/><br>
-    </div>
-    <button class="form-button primary-filled" @click="sendForm(name, email, password, password_again)">
-      Зарегистрироваться
-    </button>
+    <button class="form-button primary-filled" @click="sendForm(email, password)">Войти</button>
     <hr width="100%" size="2">
-    <a href="/auth/login" class="login-a light-filled">
-      Войти в Lite Tracker
+    <a href="/auth/register" class="register-a light-filled">
+      Зарегистрироваться
     </a>
-  </form>
+    <section class="social-login">
+      <a href="" class="yandex-login-a light-filled">
+        <div></div>
+        <img src="../assets/yandex_logo.png" alt="Yandex"
+             style="width: 2rem; height: 2rem; border-radius: 50%; pointer-events: none; margin: 0;"/>
+        <div></div>
+      </a>
+    </section>
+  </div>
 </template>
 
 <style scoped>

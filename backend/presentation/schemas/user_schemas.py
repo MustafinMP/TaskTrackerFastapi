@@ -17,7 +17,7 @@ class RegisterFormSchema(BaseModel):
     name: str
     email: str
     password: str
-    password_again: str
+    password_confirmation: str
 
 
 class AddUserSchema(RegisterFormSchema):
