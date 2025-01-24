@@ -1,7 +1,7 @@
 import db_session
 from application.exceptions import EmailIsAlreadyExists
 from application.services import PasswordHasher
-from infrastructure.entities import UserDM
+from domain.entities import UserDM
 from infrastructure.repositories import UserRepository
 from presentation.schemas import AddUserSchema
 

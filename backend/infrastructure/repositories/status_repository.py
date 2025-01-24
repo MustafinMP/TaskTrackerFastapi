@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.db_models import StatusModel
-from infrastructure.entities import StatusDM
+from domain.entities import StatusDM
 
 
 class StatusRepository:

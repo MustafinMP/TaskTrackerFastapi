@@ -3,7 +3,7 @@ from starlette import status
 
 from application.exceptions import EmailIsAlreadyExists, WrongPassword
 from application.services import UserService, PasswordHasher
-from infrastructure.entities import UserDM
+from domain.entities import UserDM
 from presentation.schemas import LoginFormSchema, RegisterFormSchema
 
 

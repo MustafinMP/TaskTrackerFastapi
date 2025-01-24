@@ -1,5 +1,5 @@
 import db_session
-from infrastructure.entities import StatusDM
+from domain.entities import StatusDM
 from infrastructure.repositories import StatusRepository
 
 

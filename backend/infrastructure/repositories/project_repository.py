@@ -2,7 +2,7 @@ from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.db_models import UserModel, ProjectModel, user_to_project_model
-from infrastructure.entities import ProjectDM, MemberDM
+from domain.entities import ProjectDM, MemberDM
 
 
 class ProjectRepository:

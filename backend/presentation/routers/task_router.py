@@ -4,7 +4,7 @@ from starlette.exceptions import HTTPException
 
 from application.exceptions.task_exceptions import UserPermissionError
 from application.services import TaskService
-from infrastructure.entities import CreateTaskDM
+from domain.entities import CreateTaskDM
 from presentation.cookie_manager import CookieManager
 from presentation.schemas.task_schemas import CreateTaskSchema
 

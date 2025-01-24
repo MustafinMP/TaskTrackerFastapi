@@ -1,5 +1,5 @@
 import db_session
-from infrastructure.entities import TaskDM, UpdateTaskDM, CreateTaskDM
+from domain.entities import TaskDM, UpdateTaskDM, CreateTaskDM
 from application.services import ProjectService
 from application.exceptions.task_exceptions import TaskDoesNotExistError, UserPermissionError
 from infrastructure.repositories import TaskRepository

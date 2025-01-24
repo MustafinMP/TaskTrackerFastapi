@@ -3,7 +3,6 @@ from datetime import datetime
 
 from sqlalchemy import String, ForeignKey, Table, Column, Integer, TIMESTAMP, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy_serializer import SerializerMixin
 
 from db_session import SqlAlchemyBase
 
@@ -14,7 +13,7 @@ user_to_project_model = Table(
 )
 
 
-class ProjectModel(SqlAlchemyBase, SerializerMixin):
+class ProjectModel(SqlAlchemyBase):
     __tablename__ = 'project'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -25,7 +24,7 @@ class ProjectModel(SqlAlchemyBase, SerializerMixin):
     creator = relationship('UserModel', foreign_keys=[creator_id])
 
 
-class InviteLinkModel(SqlAlchemyBase, SerializerMixin):
+class InviteLinkModel(SqlAlchemyBase):
     __tablename__ = 'invite_link'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

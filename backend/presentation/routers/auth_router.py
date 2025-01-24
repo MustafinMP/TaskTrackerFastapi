@@ -1,8 +1,6 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Form, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
-from starlette.responses import Response, RedirectResponse
+from starlette.responses import Response
 
 from application.exceptions import EmailIsAlreadyExists, WrongPassword
 from application.services import AuthService
@@ -47,11 +45,11 @@ async def login_cookie(
     cookie_manager.set_cookie(response, user_id)
 
 
-@router.get('/yandex-login')
-async def yandex_login():
-    """Register or sign in by means of Yandex Account."""
-    redirect_url = YANDEX_API_REQUEST
-    return RedirectResponse(redirect_url)
+# @router.get('/yandex-login')
+# async def yandex_login():
+#     """Register or sign in by means of Yandex Account."""
+#     redirect_url = YANDEX_API_REQUEST
+#     return RedirectResponse(redirect_url)
 
 #
 # @router.get('/yandex-callback')

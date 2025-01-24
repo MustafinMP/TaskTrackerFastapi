@@ -4,7 +4,7 @@ from sqlalchemy import select, update, delete, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.db_models import TaskModel, TagModel, ProjectModel
-from infrastructure.entities import CreateTaskDM, TaskToTagRelationDM, UpdateTaskDM, TaskDM
+from domain.entities import CreateTaskDM, TaskToTagRelationDM, UpdateTaskDM, TaskDM
 
 
 class TaskRepository:

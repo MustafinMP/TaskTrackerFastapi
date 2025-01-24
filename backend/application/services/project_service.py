@@ -1,5 +1,5 @@
 import db_session
-from infrastructure.entities import ProjectDM
+from domain.entities import ProjectDM
 from infrastructure.repositories import ProjectRepository
 
 

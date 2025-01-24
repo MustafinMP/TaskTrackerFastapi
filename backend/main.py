@@ -1,12 +1,8 @@
-import logging
-
 import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from starlette.staticfiles import StaticFiles
 
 from presentation.routers import auth_router, project_router, task_router
-from presentation.pages import auth_router_pages, project_router_pages
 
 
 app = FastAPI()
@@ -27,13 +23,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.mount('/static', StaticFiles(directory='../frontend/static', html=True))
 
 app.include_router(auth_router, prefix='/api/v0')
 app.include_router(project_router, prefix='/api/v0')
 app.include_router(task_router, prefix='/api/v0')
-app.include_router(auth_router_pages)
-app.include_router(project_router_pages)
 
 
 if __name__ == '__main__':
