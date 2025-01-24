@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from starlette import status
 
-from application.exceptions import EmailIsAlreadyExists, WrongPassword
+from application.exceptions import EmailIsAlreadyExists, WrongPassword, EmailDoesntExist
 from application.services import UserService, PasswordHasher
 from domain.entities import UserDM
 from presentation.schemas import LoginFormSchema, RegisterFormSchema
@@ -15,15 +15,9 @@ class AuthService:
     async def login_user_for_id(self, form: LoginFormSchema) -> int:
         user: UserDM = await self._user_service.get_user_by_email(form.email)
         if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail='Пользователь не зарегистрирован'
-            )
+            raise EmailDoesntExist
         if not self._password_hasher.check_password(user.hashed_password, form.password):
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail='Неверный пароль'
-            )
+            raise WrongPassword
         return user.id
 
     async def register_user(self, form: RegisterFormSchema) -> None:

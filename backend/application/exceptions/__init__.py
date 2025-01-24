@@ -1,1 +1,1 @@
-from application.exceptions.user_exceptions import EmailIsAlreadyExists, WrongPassword
+from application.exceptions.user_exceptions import EmailIsAlreadyExists, WrongPassword, EmailDoesntExist

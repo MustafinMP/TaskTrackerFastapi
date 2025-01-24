@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 from starlette.responses import Response
 
-from application.exceptions import EmailIsAlreadyExists, WrongPassword
+from application.exceptions import EmailIsAlreadyExists, WrongPassword, EmailDoesntExist
 from application.services import AuthService
 from presentation.cookie_manager import CookieManager
 from presentation.schemas import RegisterFormSchema, LoginFormSchema
@@ -36,13 +36,24 @@ async def register(
 
 
 @router.post('/login')
-async def login_cookie(
+async def login(
         form: LoginFormSchema,
         response: Response,
         cookie_manager: CookieManager = Depends(CookieManager)
 ):
-    user_id = await AuthService().login_user_for_id(form)
-    cookie_manager.set_cookie(response, user_id)
+    try:
+        user_id = await AuthService().login_user_for_id(form)
+        cookie_manager.set_cookie(response, user_id)
+    except WrongPassword:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail='Неверный логин или пароль'
+        )
+    except EmailDoesntExist:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail='Неверный логин или пароль'
+        )
 
 
 # @router.get('/yandex-login')
