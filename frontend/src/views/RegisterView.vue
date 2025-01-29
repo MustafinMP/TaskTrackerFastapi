@@ -19,7 +19,7 @@ export default{
         password_confirmation: password_confirmation
       };
       console.log(data);
-      fetch('http://127.0.0.1:8000/api/v0/auth/register', {
+      fetch('http://localhost:8000/api/v0/auth/register', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {'Content-Type': 'application/json'}

@@ -1,5 +1,7 @@
 <script lang="ts">
 
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -14,8 +16,8 @@ export default {
   },
   methods: {
     fetchData() {
-      fetch('http://127.0.0.1:8000/api/v0/tasks').then(response => response.json())
-          .then(tasks => this.tasks = tasks);
+      axios.get('http://localhost:8000/api/v0/tasks', { withCredentials: true })
+          .then(response => this.tasks = response.data);
     }
   }
 }

@@ -44,6 +44,7 @@ async def login(
     try:
         user_id = await AuthService().login_user_for_id(form)
         cookie_manager.set_cookie(response, user_id)
+        return user_id
     except WrongPassword:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

@@ -14,6 +14,9 @@ origins = [
     "http://127.0.0.1:8000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1",
 ]
 
 app.add_middleware(
@@ -30,4 +33,4 @@ app.include_router(task_router, prefix='/api/v0')
 
 
 if __name__ == '__main__':
-    uvicorn.run('main:app')
+    uvicorn.run('main:app', host='localhost')

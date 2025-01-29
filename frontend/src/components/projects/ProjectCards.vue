@@ -1,4 +1,6 @@
 <script lang="ts">
+import axios from 'axios'
+
 export default {
   data() {
     return {
@@ -7,13 +9,12 @@ export default {
   },
   created() {
     this.fetchData();
-    console.log(this.projects)
   },
   methods: {
     fetchData() {
-      fetch('http://127.0.0.1:8000/api/v0/projects/all').then(response => response.json())
-          .then(projects => this.projects = projects);
-
+      axios.get('http://localhost:8000/api/v0/projects/all', { withCredentials: true })
+          .then(response => this.projects = response.data)
+          .catch(error => console.error('Error fail:', error));
     }
   }
 }
