@@ -15,11 +15,11 @@ export default{
         email: email,
         password: password
       };
-      fetch('http://localhost:8000/api/v0/auth/login', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {'Content-Type': 'application/json'},
-        credentials: "include"
+      axios.post('http://localhost:8000/api/v0/auth/login', data, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
       });
       router.push('/');
     }

@@ -32,12 +32,7 @@ class CookieManager:
             secure=False,  # Установите True, если используете HTTPS
         )
 
-    def get_session_data(self, session_id: str = Cookie(alias=COOKIE_SESSION_ID_KEY)) -> CookieSession:
-        if session_id not in self._cookies:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-        return self._cookies[session_id]
-
-    def get_current_user_id(self, session_id: str = Cookie(alias=COOKIE_SESSION_ID_KEY) or None) -> int | None:
+    def get_current_user_id(self, session_id: str = Cookie(alias=COOKIE_SESSION_ID_KEY)) -> int | None:
         if session_id not in self._cookies:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         return self._cookies[session_id].user_id

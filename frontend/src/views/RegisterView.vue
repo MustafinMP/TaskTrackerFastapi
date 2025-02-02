@@ -1,5 +1,6 @@
 <script lang="ts">
 import router from "@/router";
+import axios from "axios";
 
 export default{
   data() {
@@ -18,11 +19,11 @@ export default{
         password: password,
         password_confirmation: password_confirmation
       };
-      console.log(data);
-      fetch('http://localhost:8000/api/v0/auth/register', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {'Content-Type': 'application/json'}
+      axios.post('http://localhost:8000/api/v0/auth/register', data, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
       });
       router.push('/auth/login');
     }
